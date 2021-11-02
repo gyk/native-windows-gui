@@ -296,9 +296,9 @@ impl<'a> ImageFrameBuilder<'a> {
     }
 
     pub fn build(self, out: &mut ImageFrame) -> Result<(), NwgError> {
-        use winapi::um::winuser::{SS_BITMAP, SS_ICON, SS_REALSIZECONTROL};
+        use winapi::um::winuser::{SS_BITMAP, SS_ICON, SS_REALSIZECONTROL, SS_CENTERIMAGE};
 
-        let mut flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags()) | SS_REALSIZECONTROL;
+        let mut flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags()) | SS_REALSIZECONTROL | SS_CENTERIMAGE;
         if self.icon.is_some() {
             flags |= SS_ICON;
         } else {
