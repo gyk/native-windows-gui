@@ -2,7 +2,7 @@ use winapi::um::winuser::{WS_VISIBLE, WS_DISABLED};
 use winapi::um::wingdi::DeleteObject;
 use winapi::shared::windef::HBRUSH;
 use crate::win32::{
-    base_helper::check_hwnd,  
+    base_helper::check_hwnd,
     window_helper as wh,
     resources_helper as rh
 };
@@ -139,7 +139,7 @@ impl ImageFrame {
         unsafe { wh::set_window_enabled(handle, v) }
     }
 
-    /// Return true if the control is visible to the user. Will return true even if the 
+    /// Return true if the control is visible to the user. Will return true even if the
     /// control is outside of the parent client view (ex: at the position (10000, 10000))
     pub fn visible(&self) -> bool {
         let handle = check_hwnd(&self.handle, NOT_BOUND, BAD_HANDLE);
@@ -207,7 +207,7 @@ impl ImageFrame {
         let parent_handle = ControlHandle::Hwnd(wh::get_window_parent(handle));
         let brush = unsafe { CreateSolidBrush(RGB(c[0], c[1], c[2])) };
         self.background_brush = Some(brush);
-        
+
         let handler = bind_raw_event_handler_inner(&parent_handle, handle as UINT_PTR, move |_hwnd, msg, _w, l| {
             match msg {
                 WM_CTLCOLORSTATIC => {
@@ -296,15 +296,15 @@ impl<'a> ImageFrameBuilder<'a> {
     }
 
     pub fn build(self, out: &mut ImageFrame) -> Result<(), NwgError> {
-        use winapi::um::winuser::{SS_BITMAP, SS_ICON};
+        use winapi::um::winuser::{SS_BITMAP, SS_ICON, SS_REALSIZECONTROL};
 
-        let mut flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags());
+        let mut flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags()) | SS_REALSIZECONTROL;
         if self.icon.is_some() {
             flags |= SS_ICON;
         } else {
             flags |= SS_BITMAP;
         }
-        
+
         let parent = match self.parent {
             Some(p) => Ok(p),
             None => Err(NwgError::no_parent("ImageFrame"))
