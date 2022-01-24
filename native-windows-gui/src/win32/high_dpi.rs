@@ -1,4 +1,3 @@
-#[cfg(feature = "high-dpi")]
 use winapi::um::winuser::USER_DEFAULT_SCREEN_DPI;
 
 #[cfg(not(feature = "high-dpi"))]
@@ -88,5 +87,9 @@ pub unsafe fn dpi() -> i32 {
     use winapi::um::wingdi::LOGPIXELSX;
     let screen = GetDC(std::ptr::null_mut());
     let dpi = GetDeviceCaps(screen, LOGPIXELSX);
-    dpi
+    if dpi == 0 {
+        USER_DEFAULT_SCREEN_DPI
+    } else {
+        dpi
+    }
 }
