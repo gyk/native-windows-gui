@@ -1052,9 +1052,9 @@ impl ListView {
 
     /// Winapi flags required by the control
     pub fn forced_flags(&self) -> u32 {
-        use winapi::um::winuser::{WS_BORDER, WS_CHILD};
+        use winapi::um::winuser::WS_CHILD;
 
-        WS_CHILD | WS_BORDER | LVS_NOCOLUMNHEADER
+        WS_CHILD
     }
 
     fn set_double_buffered(&mut self) {
