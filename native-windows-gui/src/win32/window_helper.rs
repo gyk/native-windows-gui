@@ -461,7 +461,7 @@ pub unsafe fn get_window_class_name(handle: HWND) -> String {
 
     OsString::from_wide(&class_name_raw[..count])
         .into_string()
-        .unwrap_or("".to_string())
+        .unwrap_or_else(|_| "".to_string())
 }
 
 #[cfg(target_pointer_width = "64")]

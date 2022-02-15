@@ -415,7 +415,7 @@ impl RichTextBox {
     /// Get the linecount and then scroll the text to the last line
     pub fn scroll_lastline(&self) {
         let lines = self.linecount();
-        self.scroll(lines * -1);
+        self.scroll(-lines);
         self.scroll(lines - 2);
     }
 

@@ -427,7 +427,7 @@ impl<'a> TabsContainerBuilder<'a> {
     }
 
     pub fn build(self, out: &mut TabsContainer) -> Result<(), NwgError> {
-        let flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags());
+        let flags = self.flags.map(|f| f.bits()).unwrap_or_else(|| out.flags());
 
         let parent = match self.parent {
             Some(p) => Ok(p),
@@ -726,7 +726,7 @@ impl<'a> TabBuilder<'a> {
         match &parent {
             &ControlHandle::Hwnd(h) => {
                 let class_name = unsafe { wh::get_window_class_name(h) };
-                if &class_name != WC_TABCONTROL {
+                if class_name != WC_TABCONTROL {
                     Err(NwgError::control_create(
                         "Tab requires a TabsContainer parent.",
                     ))

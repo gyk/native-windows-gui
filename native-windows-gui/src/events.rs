@@ -591,6 +591,7 @@ impl DropFiles {
     }
 
     /// Return the number of files dropped
+    #[allow(clippy::len_without_is_empty)]
     pub fn len(&self) -> usize {
         use std::ptr;
         use winapi::um::shellapi::DragQueryFileW;
@@ -725,9 +726,9 @@ impl MinMaxInfo {
 
 impl fmt::Debug for MinMaxInfo {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, 
+        write!(f,
             "MinMaxInfo {{ maximized_size: {:?}, maximized_pos: {:?}, max_size: {:?}, min_size: {:?} }}",
-            self.maximized_size(), self.maximized_pos(), self.max_size(), self.min_size() 
+            self.maximized_size(), self.maximized_pos(), self.max_size(), self.min_size()
         )
     }
 }

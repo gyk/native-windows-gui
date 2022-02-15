@@ -104,9 +104,7 @@ impl<D: Display + Default> ListBox<D> {
         let display = format!("{}", item);
         let display_os = to_utf16(&display);
 
-        unsafe {
-            wh::send_message(handle, LB_ADDSTRING, 0, display_os.as_ptr() as isize);
-        }
+        wh::send_message(handle, LB_ADDSTRING, 0, display_os.as_ptr() as isize);
 
         self.collection.borrow_mut().push(item);
     }
@@ -129,9 +127,7 @@ impl<D: Display + Default> ListBox<D> {
             col.insert(index, item);
         }
 
-        unsafe {
-            wh::send_message(handle, LB_INSERTSTRING, index, display_os.as_ptr() as isize);
-        }
+        wh::send_message(handle, LB_INSERTSTRING, index, display_os.as_ptr() as isize);
     }
 
     /// Remove the item at the selected index and returns it.
@@ -293,13 +289,11 @@ impl<D: Display + Default> ListBox<D> {
         let handle = check_hwnd(&self.handle, NOT_BOUND, BAD_HANDLE);
         let os_string = to_utf16(value);
 
-        unsafe {
-            let index = wh::send_message(handle, LB_SELECTSTRING, 0, os_string.as_ptr() as isize);
-            if index == LB_ERR {
-                None
-            } else {
-                Some(index as usize)
-            }
+        let index = wh::send_message(handle, LB_SELECTSTRING, 0, os_string.as_ptr() as isize);
+        if index == LB_ERR {
+            None
+        } else {
+            Some(index as usize)
         }
     }
 
@@ -333,9 +327,7 @@ impl<D: Display + Default> ListBox<D> {
             let display = format!("{}", item);
             let display_os = to_utf16(&display);
 
-            unsafe {
-                wh::send_message(handle, LB_ADDSTRING, 0, display_os.as_ptr() as isize);
-            }
+            wh::send_message(handle, LB_ADDSTRING, 0, display_os.as_ptr() as isize);
         }
     }
 
@@ -351,9 +343,7 @@ impl<D: Display + Default> ListBox<D> {
             let display = format!("{}", item);
             let display_os = to_utf16(&display);
 
-            unsafe {
-                wh::send_message(handle, LB_ADDSTRING, 0, display_os.as_ptr() as isize);
-            }
+            wh::send_message(handle, LB_ADDSTRING, 0, display_os.as_ptr() as isize);
         }
 
         let mut col_ref = self.collection.borrow_mut();
@@ -578,7 +568,7 @@ impl<'a, D: Display + Default> ListBoxBuilder<'a, D> {
     }
 
     pub fn build(self, out: &mut ListBox<D>) -> Result<(), NwgError> {
-        let flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags());
+        let flags = self.flags.map(|f| f.bits()).unwrap_or_else(|| out.flags());
 
         let parent = match self.parent {
             Some(p) => Ok(p),

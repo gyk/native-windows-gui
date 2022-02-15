@@ -48,7 +48,8 @@ impl FontDialog {
         let font: &LOGFONTW = &data.font;
 
         let end = font.lfFaceName.iter().position(|&c| c == 0).unwrap_or(0);
-        let name = String::from_utf16(&font.lfFaceName[0..end]).unwrap_or("ERROR".to_string());
+        let name =
+            String::from_utf16(&font.lfFaceName[0..end]).unwrap_or_else(|_| "ERROR".to_string());
 
         FontInfo {
             point_size: data.dialog.iPointSize as u32,

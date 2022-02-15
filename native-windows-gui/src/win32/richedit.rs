@@ -70,7 +70,7 @@ const PFA_FULL_INTERWORD: u16 = 4;
 const PFE_RTLPARA: u16 = (PFM_RTLPARA >> 16) as u16;
 
 #[repr(C)]
-#[allow(non_snake_case)]
+#[allow(non_snake_case, clippy::upper_case_acronyms)]
 #[derive(Default)]
 struct CHARFORMATW {
     cbSize: UINT,
@@ -96,7 +96,7 @@ struct CHARFORMATW {
 }
 
 #[repr(C)]
-#[allow(non_snake_case)]
+#[allow(non_snake_case, clippy::upper_case_acronyms)]
 #[derive(Default)]
 struct PARAFORMAT {
     cbSize: UINT,

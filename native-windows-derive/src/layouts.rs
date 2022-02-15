@@ -27,7 +27,7 @@ impl LayoutChild {
 
     pub fn prepare(field: &syn::Field) -> Option<LayoutChild> {
         let field_name = field.ident.as_ref().map(|i| i.to_string())
-            .unwrap_or("Unnamed".to_string());
+            .unwrap_or_else(|| "Unnamed".to_string());
 
         let map_attr = |attr: &syn::Attribute| {
             LayoutChild::Init {
@@ -35,7 +35,7 @@ impl LayoutChild {
                 params: syn::parse2(attr.tokens.clone()).unwrap()
             }
         };
-        
+
         field.attrs.iter()
             .find(|attr| attr.path.get_ident().map(|id| id == "nwg_layout_item").unwrap_or(false) )
             .map(map_attr)
@@ -57,7 +57,7 @@ impl LayoutChild {
                 .iter()
                 .filter(|p| p.ident == "layout")
                 .any(|p| match &p.e {
-                    syn::Expr::Path(exp_path) => 
+                    syn::Expr::Path(exp_path) =>
                         exp_path.path.segments.last()
                             .map(|seg| &seg.ident == parent)
                             .unwrap_or(false),
@@ -112,7 +112,7 @@ impl LayoutChild {
 
     fn int_value(expr: &syn::Expr) -> u32 {
         match expr {
-            syn::Expr::Lit(lit) => 
+            syn::Expr::Lit(lit) =>
                 match &lit.lit {
                     syn::Lit::Int(i) => { i.base10_parse().unwrap() },
                     _ => panic!("Layout item members must be int literal.")

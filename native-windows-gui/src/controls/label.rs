@@ -493,7 +493,7 @@ impl<'a> LabelBuilder<'a> {
     pub fn build(self, out: &mut Label) -> Result<(), NwgError> {
         use winapi::um::winuser::{SS_CENTER, SS_LEFT, SS_RIGHT};
 
-        let mut flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags());
+        let mut flags = self.flags.map(|f| f.bits()).unwrap_or_else(|| out.flags());
 
         match self.h_align {
             HTextAlign::Left => {

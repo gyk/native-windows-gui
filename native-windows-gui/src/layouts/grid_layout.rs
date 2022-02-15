@@ -509,12 +509,12 @@ impl GridLayout {
             let y: u32 =
                 m_top + (sp + (sp2 * item.row)) + rows[0..(item.row as usize)].iter().sum::<u32>();
 
-            let local_width: u32 = &columns
+            let local_width: u32 = columns
                 [(item.col as usize)..((item.col + item.col_span) as usize)]
                 .iter()
                 .sum::<u32>()
                 + (sp2 * (item.col_span - 1));
-            let local_height: u32 = &rows
+            let local_height: u32 = rows
                 [(item.row as usize)..((item.row + item.row_span) as usize)]
                 .iter()
                 .sum::<u32>()

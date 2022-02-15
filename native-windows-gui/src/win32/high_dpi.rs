@@ -1,3 +1,5 @@
+#![allow(clippy::missing_safety_doc)]
+
 use winapi::um::winuser::USER_DEFAULT_SCREEN_DPI;
 
 #[cfg(not(feature = "high-dpi"))]

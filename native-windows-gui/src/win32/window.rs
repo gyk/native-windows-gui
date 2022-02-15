@@ -739,7 +739,7 @@ unsafe extern "system" fn process_events(
             let count = GetClassNameW(child_handle, class_name_raw.as_mut_ptr(), 100) as usize;
             let class_name = OsString::from_wide(&class_name_raw[..count])
                 .into_string()
-                .unwrap_or("".to_string());
+                .unwrap_or_else(|_| "".to_string());
 
             match &class_name as &str {
                 "Button" => callback(button_commands(message), NO_DATA, handle),
@@ -1206,7 +1206,7 @@ unsafe fn handle_default_notify_callback<'a>(notif_raw: *const NMHDR, callback: 
     let count = GetClassNameW(notif.hwndFrom, class_name_raw.as_mut_ptr(), 100) as usize;
     let class_name = OsString::from_wide(&class_name_raw[..count])
         .into_string()
-        .unwrap_or("".to_string());
+        .unwrap_or_else(|_| "".to_string());
 
     let code = notif.code;
 
@@ -1234,7 +1234,7 @@ unsafe fn is_textbox_control(hwnd: HWND) -> bool {
     let count = GetClassNameW(hwnd, class_name_raw.as_mut_ptr(), 100) as usize;
     let class_name = OsString::from_wide(&class_name_raw[..count])
         .into_string()
-        .unwrap_or("".to_string());
+        .unwrap_or_else(|_| "".to_string());
 
     class_name == "Edit" || class_name == "RICHEDIT50W"
 }

@@ -343,7 +343,7 @@ impl TextInput {
             );
             OsString::from_wide(&placeholder_text)
                 .into_string()
-                .unwrap_or("".to_string())
+                .unwrap_or_else(|_| "".to_string())
         }
     }
 
@@ -610,7 +610,7 @@ impl<'a> TextInputBuilder<'a> {
     }
 
     pub fn build(self, out: &mut TextInput) -> Result<(), NwgError> {
-        let mut flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags());
+        let mut flags = self.flags.map(|f| f.bits()).unwrap_or_else(|| out.flags());
 
         match self.align {
             HTextAlign::Left => flags |= ES_LEFT,

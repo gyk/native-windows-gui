@@ -186,7 +186,7 @@ impl FrameBuilder {
     }
 
     pub fn build(self, out: &mut Frame) -> Result<(), NwgError> {
-        let flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags());
+        let flags = self.flags.map(|f| f.bits()).unwrap_or_else(|| out.flags());
 
         let parent = match self.parent {
             Some(p) => Ok(p),

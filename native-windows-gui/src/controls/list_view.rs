@@ -425,7 +425,7 @@ impl ListView {
 
         let mut mask = LVCF_TEXT | LVCF_WIDTH;
 
-        let text = insert.text.unwrap_or("".to_string());
+        let text = insert.text.unwrap_or_else(|| "".to_string());
         let mut text = to_utf16(&text);
 
         let col_width = insert.width.unwrap_or(100) as f64 * crate::win32::high_dpi::scale_factor();
@@ -526,7 +526,7 @@ impl ListView {
             mask |= LVCF_FMT;
         }
 
-        let text = insert.text.unwrap_or("".to_string());
+        let text = insert.text.unwrap_or_else(|| "".to_string());
         let mut text = to_utf16(&text);
 
         let mut item: LVCOLUMNW = unsafe { mem::zeroed() };
@@ -736,7 +736,7 @@ impl ListView {
 
         let mask = LVIF_TEXT | check_image_mask(&insert);
         let image = check_image(&insert);
-        let text = insert.text.unwrap_or("".to_string());
+        let text = insert.text.unwrap_or_else(|| "".to_string());
         let mut text = to_utf16(&text);
 
         let mut item: LVITEMW = unsafe { mem::zeroed() };
@@ -834,7 +834,7 @@ impl ListView {
         let image = check_image(&insert);
 
         let use_text = insert.text.is_some();
-        let text = insert.text.unwrap_or("".to_string());
+        let text = insert.text.unwrap_or_else(|| "".to_string());
         let mut text = to_utf16(&text);
 
         let mut item: LVITEMW = unsafe { mem::zeroed() };
@@ -1254,7 +1254,7 @@ impl ListViewBuilder {
     }
 
     pub fn build(self, out: &mut ListView) -> Result<(), NwgError> {
-        let mut flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags());
+        let mut flags = self.flags.map(|f| f.bits()).unwrap_or_else(|| out.flags());
         flags |= self.style.bits();
 
         let parent = match self.parent {

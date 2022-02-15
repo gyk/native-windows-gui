@@ -308,7 +308,7 @@ impl<'a> ImageFrameBuilder<'a> {
     pub fn build(self, out: &mut ImageFrame) -> Result<(), NwgError> {
         use winapi::um::winuser::{SS_BITMAP, SS_ICON};
 
-        let mut flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags());
+        let mut flags = self.flags.map(|f| f.bits()).unwrap_or_else(|| out.flags());
         if self.icon.is_some() {
             flags |= SS_ICON;
         } else {

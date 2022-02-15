@@ -628,7 +628,7 @@ impl<'a, D: Display + Default> ComboBoxBuilder<'a, D> {
     }
 
     pub fn build(self, out: &mut ComboBox<D>) -> Result<(), NwgError> {
-        let flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags());
+        let flags = self.flags.map(|f| f.bits()).unwrap_or_else(|| out.flags());
 
         let parent = match self.parent {
             Some(p) => Ok(p),

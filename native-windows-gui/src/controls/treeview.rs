@@ -912,7 +912,7 @@ impl<'a> TreeViewBuilder<'a> {
     }
 
     pub fn build(self, out: &mut TreeView) -> Result<(), NwgError> {
-        let flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags());
+        let flags = self.flags.map(|f| f.bits()).unwrap_or_else(|| out.flags());
 
         let parent = match self.parent {
             Some(p) => Ok(p),

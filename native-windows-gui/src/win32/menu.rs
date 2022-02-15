@@ -129,7 +129,7 @@ pub unsafe fn enable_menuitem(h: HMENU, pos: Option<UINT>, id: Option<UINT>, ena
         false => MFS_DISABLED,
     };
 
-    let mut info = MENUITEMINFOW {
+    let info = MENUITEMINFOW {
         cbSize: mem::size_of::<MENUITEMINFOW>() as UINT,
         fMask: MIIM_STATE,
         fType: 0,
@@ -144,7 +144,7 @@ pub unsafe fn enable_menuitem(h: HMENU, pos: Option<UINT>, id: Option<UINT>, ena
         hbmpItem: ptr::null_mut(),
     };
 
-    SetMenuItemInfoW(h, value, use_position as BOOL, &mut info);
+    SetMenuItemInfoW(h, value, use_position as BOOL, &info);
 }
 
 /**
@@ -226,7 +226,7 @@ unsafe fn build_hmenu_separator(menu: HMENU) -> ControlHandle {
 
     // Set the unique id of the separator
     let pos = GetMenuItemCount(menu) - 1;
-    let mut info = MENUITEMINFOW {
+    let info = MENUITEMINFOW {
         cbSize: mem::size_of::<MENUITEMINFOW>() as UINT,
         fMask: MIIM_ID,
         fType: 0,
@@ -241,7 +241,7 @@ unsafe fn build_hmenu_separator(menu: HMENU) -> ControlHandle {
         hbmpItem: ptr::null_mut(),
     };
 
-    SetMenuItemInfoW(menu, pos as UINT, true as BOOL, &mut info);
+    SetMenuItemInfoW(menu, pos as UINT, true as BOOL, &info);
 
     ControlHandle::MenuItem(menu, item_id)
 }
@@ -254,7 +254,7 @@ unsafe fn use_menu_command(h: HMENU) {
     use winapi::shared::minwindef::DWORD;
     use winapi::um::winuser::{SetMenuInfo, MENUINFO, MIM_STYLE, MNS_NOTIFYBYPOS};
 
-    let mut info = MENUINFO {
+    let info = MENUINFO {
         cbSize: mem::size_of::<MENUINFO>() as DWORD,
         fMask: MIM_STYLE,
         dwStyle: MNS_NOTIFYBYPOS,
@@ -264,7 +264,7 @@ unsafe fn use_menu_command(h: HMENU) {
         dwMenuData: 0,
     };
 
-    SetMenuInfo(h, &mut info);
+    SetMenuInfo(h, &info);
 }
 
 /**

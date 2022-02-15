@@ -35,6 +35,7 @@ pub struct HdpiPlottingExample {
 
 impl HdpiPlottingExample {
 
+    #[allow(dead_code)]
     fn simple_chart(&self) -> Result<(), Box<dyn std::error::Error>> {
         let root = self.graph.draw().unwrap();
 

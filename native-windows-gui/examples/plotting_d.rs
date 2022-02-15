@@ -38,7 +38,7 @@ pub struct PlottingExample {
     plotting_data: RefCell<PlottingData>,
 
     #[nwg_control(size: (900, 600), position: (300, 300), title: "Plotting")]
-    #[nwg_events( 
+    #[nwg_events(
         OnInit: [PlottingExample::draw_graph],
         OnWindowClose: [nwg::stop_thread_dispatch()],
         OnResize: [PlottingExample::draw_graph],
@@ -49,7 +49,7 @@ pub struct PlottingExample {
     layout: nwg::GridLayout,
 
     #[nwg_control(parent: window)]
-    #[nwg_events( 
+    #[nwg_events(
         OnMouseMove: [PlottingExample::update_interactive],
     )]
     #[nwg_layout_item(layout: layout, col: 0, row: 0, col_span: 3)]

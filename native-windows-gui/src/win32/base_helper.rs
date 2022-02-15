@@ -25,7 +25,7 @@ pub fn check_hwnd(handle: &ControlHandle, not_bound: &str, bad_handle: &str) -> 
     }
 }
 
-pub fn to_utf16<'a>(s: &'a str) -> Vec<u16> {
+pub fn to_utf16(s: &str) -> Vec<u16> {
     use std::ffi::OsStr;
     use std::os::windows::ffi::OsStrExt;
 
@@ -46,7 +46,7 @@ pub fn from_utf16(s: &[u16]) -> String {
 
     os_string
         .into_string()
-        .unwrap_or("Decoding error".to_string())
+        .unwrap_or_else(|_| "Decoding error".to_string())
 }
 
 /**
@@ -123,7 +123,7 @@ pub unsafe fn get_system_error() -> (DWORD, String) {
     let end = buf.iter().position(|&i| i == 0).unwrap_or(1024);
     let error_message = OsString::from_wide(&buf[..end])
         .into_string()
-        .unwrap_or("Error while decoding system error message".to_string());
+        .unwrap_or_else(|_| "Error while decoding system error message".to_string());
 
     (code, error_message)
 }

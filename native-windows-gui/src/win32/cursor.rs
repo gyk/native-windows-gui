@@ -52,7 +52,7 @@ impl GlobalCursor {
         }
         let handle = control.hwnd().expect(MSG);
 
-        let (x, y) = point.unwrap_or(GlobalCursor::position());
+        let (x, y) = point.unwrap_or_else(GlobalCursor::position);
         let mut p = POINT {
             x: x as LONG,
             y: y as LONG,
@@ -85,7 +85,7 @@ impl GlobalCursor {
         }
         let handle = control.hwnd().expect(MSG);
 
-        let (x, y) = point.unwrap_or(GlobalCursor::position());
+        let (x, y) = point.unwrap_or_else(GlobalCursor::position);
         let mut p = POINT {
             x: x as LONG,
             y: y as LONG,
@@ -235,7 +235,7 @@ impl GlobalCursor {
         }
         let handle = control.hwnd().expect(MSG);
 
-        let (x, y) = point.unwrap_or(GlobalCursor::position());
+        let (x, y) = point.unwrap_or_else(GlobalCursor::position);
         let c_point = POINT {
             x: x as LONG,
             y: y as LONG,

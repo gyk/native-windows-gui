@@ -482,7 +482,7 @@ impl<'a> NumberSelectBuilder<'a> {
     }
 
     pub fn build(self, out: &mut NumberSelect) -> Result<(), NwgError> {
-        let flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags());
+        let flags = self.flags.map(|f| f.bits()).unwrap_or_else(|| out.flags());
         let (btn_flags, text_flags) = if flags & WS_TABSTOP == WS_TABSTOP {
             (
                 ButtonFlags::VISIBLE | ButtonFlags::TAB_STOP,

@@ -400,7 +400,7 @@ impl<'a> CheckBoxBuilder<'a> {
     }
 
     pub fn build(self, out: &mut CheckBox) -> Result<(), NwgError> {
-        let mut flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags());
+        let mut flags = self.flags.map(|f| f.bits()).unwrap_or_else(|| out.flags());
         if flags & BS_AUTO3STATE == 0 {
             flags |= BS_AUTOCHECKBOX;
         }

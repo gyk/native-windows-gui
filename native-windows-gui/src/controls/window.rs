@@ -168,9 +168,7 @@ impl Window {
         let handle = check_hwnd(&self.handle, NOT_BOUND, BAD_HANDLE);
 
         let image_handle = icon.map(|i| i.handle).unwrap_or(ptr::null_mut());
-        unsafe {
-            wh::send_message(handle, WM_SETICON, 0, image_handle as isize);
-        }
+        wh::send_message(handle, WM_SETICON, 0, image_handle as isize);
     }
 
     /// Return true if the control currently has the keyboard focus
@@ -372,7 +370,7 @@ impl<'a> WindowBuilder<'a> {
     pub fn build(self, out: &mut Window) -> Result<(), NwgError> {
         use crate::win32::high_dpi::physical_to_logical;
 
-        let flags = self.flags.map(|f| f.bits()).unwrap_or(out.flags());
+        let flags = self.flags.map(|f| f.bits()).unwrap_or_else(|| out.flags());
 
         let mut ex_flags = self.ex_flags;
         if self.topmost {

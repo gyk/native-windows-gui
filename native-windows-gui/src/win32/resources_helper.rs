@@ -423,7 +423,7 @@ pub unsafe fn icon_from_memory(
 //
 
 #[cfg(feature = "file-dialog")]
-pub unsafe fn create_file_dialog<'a, 'b>(
+pub unsafe fn create_file_dialog(
     action: FileDialogAction,
     multiselect: bool,
     default_folder: Option<String>,
