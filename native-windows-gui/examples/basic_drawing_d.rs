@@ -40,8 +40,8 @@ pub struct DrawingApp {
 
     // By default ExternCanvas is a window so we must specify the parent here
     #[nwg_control(parent: Some(&data.window), position: (10, 10), size: (280, 280))]
-    #[nwg_events( 
-        OnPaint: [DrawingApp::paint(SELF, EVT_DATA)], 
+    #[nwg_events(
+        OnPaint: [DrawingApp::paint(SELF, EVT_DATA)],
         OnMousePress: [DrawingApp::events(SELF, EVT)],
     )]
     canvas: nwg::ExternCanvas,

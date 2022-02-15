@@ -100,12 +100,12 @@ pub fn enable_visual_styles() {
     use winapi::um::winbase::{ActivateActCtx, CreateActCtxW, ACTCTXW};
 
     const MANIFEST_CONTENT: &str = r#"
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?> 
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-    <description>native-windows-gui comctl32 manifest</description> 
+    <description>native-windows-gui comctl32 manifest</description>
     <dependency>
         <dependentAssembly>
-            <assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" /> 
+            <assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
         </dependentAssembly>
     </dependency>
 </assembly>

@@ -28,7 +28,7 @@
     </button>
 </div>
 
-    
+
 <div id='toc' class='mobile-hidden'>
 <ul class='chapter'>
 <li><a href='index.html'><b>1.</b> Introduction</a>
@@ -100,7 +100,7 @@
         To learn how to use controls with <code>native-windows-derive</code> see <a href="nwd_controls.html">the derive section</a>
         <br><br/>
 
-        <h3>Control builder</h3>  
+        <h3>Control builder</h3>
         Controls are created using a <b>builder</b> API. On each control type, the method <code>builder</code> can be
         called in order to instantiate a builder object. Builder names use the following format: <code>[ControlName]Builder</code>. Ex: (<code>ButtonBuilder</code>).
         <br/><br/>
@@ -118,10 +118,10 @@
 <span class="w">        </span><span class="p">.</span><span class="n">build</span><span class="p">(</span><span class="n">button</span><span class="p">);</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
-            
+
 
         <h3>Control methods</h3>
-        
+
         NWG wraps almost every controls functionalities behind object methods. Fonctionnalities usually come in get/set pair.
         The syntax used is <code>[property]()</code> for getters and <code>set_[property](value)</code> for setters. Example:
         <br><br>
@@ -142,7 +142,7 @@
         Calling the methods of an uninitialized control will cause a <b>panic</b>.
         <br><br>
 
-        <h3>Window / Container controls</h3> 
+        <h3>Window / Container controls</h3>
 
         Most controls in NWG cannot hold children. Those that can are called "container controls". This includes <b>Window</b>, <b>Tab Container</b>,
         and <b>Tab</b>. TabContainer should only contains tab controls.<br><br>
@@ -164,14 +164,14 @@
 <span class="w">    </span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Basic example&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="p">.</span><span class="n">build</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">data</span><span class="p">.</span><span class="n">window</span><span class="p">)</span><span class="o">?</span><span class="p">;</span><span class="w"></span>
 </pre></div>
-            
 
-        <h3>Controls hierarchy</h3>  
+
+        <h3>Controls hierarchy</h3>
 
         All non-window control require a parent. If no parent is defined when building a new control, the build function will return a <code>NwgError::ControlCreationError</code>.
         <br><br>
 
-        <h3>Control events</h3>  
+        <h3>Control events</h3>
 
         Controls can raise <code>Events</code> when interacted with. The events that can be raised by a control are
         in the their documentation.<br/><br/>
@@ -184,11 +184,11 @@
 
         <h3>Implementation</h3>
 
-        To keep compile time low, most controls are feature-gated. 
+        To keep compile time low, most controls are feature-gated.
         <br/><br/>
 
         Every control is implemented as a wrapper over a low level window handle. As such, <b>most*</b> of them only take the size of a pointer.<br><br>
-        
+
         Some built-in controls lacks critical feature on their own. To fix this, nwg extends those controls with <a href="low_events.html">raw events handlers</a>.
         <br><br>
 

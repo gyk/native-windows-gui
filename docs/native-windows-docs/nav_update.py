@@ -14,7 +14,7 @@ NAV = r"""<!-- NAV BEGIN -->
     </button>
 </div>
 
-    
+
 <div id='toc' class='mobile-hidden'>
 <ul class='chapter'>
 <li><a href='index.html'><b>1.</b> Introduction</a>

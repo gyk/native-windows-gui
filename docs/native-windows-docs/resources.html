@@ -29,7 +29,7 @@
     </button>
 </div>
 
-    
+
 <div id='toc' class='mobile-hidden'>
 <ul class='chapter'>
 <li><a href='index.html'><b>1.</b> Introduction</a>
@@ -131,7 +131,7 @@
 
         <h3>Windows Imaging Component (WIC)</h3>
 
-        Now, because we're no longer in 3000 BC, you probably want to support more image types. Png and jpeg specifically. Thanksfully, NWG seamlessly wraps the 
+        Now, because we're no longer in 3000 BC, you probably want to support more image types. Png and jpeg specifically. Thanksfully, NWG seamlessly wraps the
         windows imaging component. This adds the following formats: .bmp(v5, with transparency), gif, ico, jpeg, png, tiff, vnd, and dds.<br/><br/>
 
         To enable the WIC, just use the <code>image-decoder</code> feature. When this is enabled, all the above formats will be supported by <code>Bitmap</code>.
@@ -150,7 +150,7 @@
         The builder api can be cumbersome, that's why Native Windows GUI also includes helper functions to load resources in a single line.
         <br/><br/>
 
-        The helper functions all have a similar signature: <code>Bitmap::from_*</code>, <code>Icon::from_*</code>. 
+        The helper functions all have a similar signature: <code>Bitmap::from_*</code>, <code>Icon::from_*</code>.
         <br/><br/>
 
         You can also check out the <a href="https://docs.rs/native-windows-gui/1.0.12/native_windows_gui/struct.Bitmap.html">docs.rs documentation</a>.
@@ -185,16 +185,16 @@
 <span class="w">    </span><span class="p">]</span><span class="w"></span>
 <span class="p">}</span><span class="w"> </span>
 </pre></div>
-            
+
 
         <h3>Fonts</h3>
 
-        Native-windows-gui supports <code>.ttf</code> and <code>.otf</code> font files. All controls that display text have a 
+        Native-windows-gui supports <code>.ttf</code> and <code>.otf</code> font files. All controls that display text have a
         <code>set_font</code> and <code>get_font</code> method to set their font.
         <br><br>
 
-        NWG has access to all the fonts families installed on the system. It's also possible to add new fonts temporarily using the <code>Font::add_font / Font::remove_font</code> 
-        or <code>Font::add_memory_font / Font::remove_memory_font</code>.<b>Those methods works globally.</b> 
+        NWG has access to all the fonts families installed on the system. It's also possible to add new fonts temporarily using the <code>Font::add_font / Font::remove_font</code>
+        or <code>Font::add_memory_font / Font::remove_memory_font</code>.<b>Those methods works globally.</b>
         <br>
 
 <div class="highlight"><pre style="width: auto"><span></span><span class="k">use</span><span class="w"> </span><span class="n">native_windows_gui</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">nwg</span><span class="p">;</span><span class="w"></span>
@@ -206,7 +206,7 @@
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 <br><br>
-            
+
 
         Once the font families are loaded, a `Font` resource must be created. Just like the other resources, this is done using the Font builder.
 
@@ -228,13 +228,13 @@
 <span class="w">    </span><span class="n">button</span><span class="p">.</span><span class="n">set_font</span><span class="p">(</span><span class="nb">Some</span><span class="p">(</span><span class="n">font</span><span class="p">));</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
-        
+
         <br/><br/>
 
         <h3>Cursors</h3>
 
         Cursors are icons that can be used in place of the default Windows mouse cursor. Cursors can be custom, loaded from <code>.cur</code> files, or they can be loaded
-        from the system default cursors (using <code>OemCursor</code>). 
+        from the system default cursors (using <code>OemCursor</code>).
         <br/><br/>
 
         Currently cursors can only be set globally using <code>GlobalCursor::set</code> (behind the <code>cursor</code> feature). Furthermore, this method must be called everytime the cursor moves in a control

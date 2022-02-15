@@ -29,7 +29,7 @@
     </button>
 </div>
 
-    
+
 <div id='toc' class='mobile-hidden'>
 <ul class='chapter'>
 <li><a href='index.html'><b>1.</b> Introduction</a>
@@ -98,7 +98,7 @@
         Native windows controls handle are public and always accessible using the field <code>handle</code>.
         <br><br>
         For example, here's the definition of <code>ControlHandle</code> and the Window control:
-            
+
 <div class="highlight"><pre>
 <span></span><span class="cp">#[derive(Default)]</span><span class="w"></span>
 <span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">Window</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -149,7 +149,7 @@
 
     Wrapping external handles should only be done on a <code>Window</code> as it only control that doesn't expose
     window class specific functions. Wrapping external handles should be considered unsafe.
-    
+
 <div class="highlight"><pre style="width: auto;">
 <span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">wrap_extern_window</span><span class="p">(</span><span class="n">hwnd</span>: <span class="nc">HWND</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">nwg</span>::<span class="n">Window</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="n">nwg</span>::<span class="n">Window</span><span class="w"> </span><span class="p">{</span><span class="w"></span>

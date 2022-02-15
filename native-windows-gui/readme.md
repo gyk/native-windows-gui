@@ -8,7 +8,7 @@ the quirks and rough edges of the API by providing a simple, safe and rust-like 
 Native Windows GUI keeps things simple. This means small compile times, minimal resource usage,
 less time searching the documentation and more time for you to develop your application.
 
-Of course, you don't have to take my word for it, check out the [showcase](../showcase) and the 
+Of course, you don't have to take my word for it, check out the [showcase](../showcase) and the
 [examples](examples).
 
 This is the 3rd and final version of NWG. It is considered "mature" or, as I would say
@@ -211,7 +211,7 @@ impl BasicApp {
     fn say_hello(&self) {
         nwg::modal_info_message(&self.window, "Hello", &format!("Hello {}", self.name_edit.text()));
     }
-    
+
     fn say_goodbye(&self) {
         nwg::modal_info_message(&self.window, "Goodbye", &format!("Goodbye {}", self.name_edit.text()));
         nwg::stop_thread_dispatch();
@@ -286,12 +286,12 @@ fn main() {
         use nwg::Event as E;
 
         match evt {
-            E::OnWindowClose => 
+            E::OnWindowClose =>
                 if &handle == &events_window as &nwg::Window {
                     nwg::modal_info_message(&events_window.handle, "Goodbye", &format!("Goodbye {}", name_edit.text()));
                     nwg::stop_thread_dispatch();
                 },
-            E::OnButtonClick => 
+            E::OnButtonClick =>
                 if &handle == &hello_button {
                     nwg::modal_info_message(&events_window.handle, "Hello", &format!("Hello {}", name_edit.text()));
                 },
@@ -330,7 +330,7 @@ impl BasicApp {
     fn say_hello(&self) {
         nwg::modal_info_message(&self.window, "Hello", &format!("Hello {}", self.name_edit.text()));
     }
-    
+
     fn say_goodbye(&self) {
         nwg::modal_info_message(&self.window, "Goodbye", &format!("Goodbye {}", self.name_edit.text()));
         nwg::stop_thread_dispatch();
@@ -356,7 +356,7 @@ mod basic_app_ui {
     impl nwg::NativeUi<BasicAppUi> for BasicApp {
         fn build_ui(mut data: BasicApp) -> Result<BasicAppUi, nwg::NwgError> {
             use nwg::Event as E;
-            
+
             // Controls
             nwg::Window::builder()
                 .flags(nwg::WindowFlags::WINDOW | nwg::WindowFlags::VISIBLE)
@@ -387,11 +387,11 @@ mod basic_app_ui {
             let handle_events = move |evt, _evt_data, handle| {
                 if let Some(ui) = evt_ui.upgrade() {
                     match evt {
-                        E::OnButtonClick => 
+                        E::OnButtonClick =>
                             if &handle == &ui.hello_button {
                                 BasicApp::say_hello(&ui);
                             },
-                        E::OnWindowClose => 
+                        E::OnWindowClose =>
                             if &handle == &ui.window {
                                 BasicApp::say_goodbye(&ui);
                             },

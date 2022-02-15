@@ -28,7 +28,7 @@
     </button>
 </div>
 
-    
+
 <div id='toc' class='mobile-hidden'>
 <ul class='chapter'>
 <li><a href='index.html'><b>1.</b> Introduction</a>
@@ -173,13 +173,13 @@
     <h3>Basic project structure</h3>
 
     <b>Native-windows-gui</b> uses structures to represent a UI interface. Controls are represent as members. It's that simple.<br><br>
-    
+
     Each control is a thin wrapper over a window handle (HWND). For more complex controls (such as listboxes), the control may contains extra data.
     All controls implements the <code>Default</code> trait. Default-built controls are considered <b>uninitialized</b>. Calling their methods
     will cause the program to panic.<br><br>
 
     Ui actions (displaying a message box in this case) should be implemented as structure methods. That is in no way a hard rule though.
-    Any type of functions can be used. It just wraps nicely with the way the derive macro handles the events. 
+    Any type of functions can be used. It just wraps nicely with the way the derive macro handles the events.
 
     <h3>Native windows derive</h3>
 
@@ -208,7 +208,7 @@
     The next thing to do is to initialize your application. As mentionned in the previous step, this means instantiating your struct.
     <b>native-windows-derive</b> implements the <code>NativeUi</code> trait, which gives you the <code>build_ui</code> function.
     The <code>build_ui</code> function takes a single argument: the initial state of your application (aka your UI struct default state).
-    Because this application is very simple, there's no user state to initialize, so we just pass <code>Default::default</code> at 
+    Because this application is very simple, there's no user state to initialize, so we just pass <code>Default::default</code> at
     let native-windows-derive do its magic.<br><br>
 
     Finally, the only thing left is to start listening for events on the thread. This is done by calling <code> nwg::dispatch_thread_events()</code>.
@@ -216,7 +216,7 @@
     so you will have to manually bind the `OnWindowClose` event<br><br>
 
     Now lets looks a the inner workings of NWG in the next section...
-        
+
 
     <h1 id="hello-world" class="section-header"><a href="#hello-world2">Hello World! (no macro)</a></h1>
     Here is the same example without the macro.
@@ -349,7 +349,7 @@
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 <br>
-        
+
 
 <h1 id="impl-tutorial" class="section-header"><a href="#info-nwg-2">The implementation in details</a></h1>
 
@@ -364,7 +364,7 @@ As mentioned in the previous section, all of the code logic is in <code>build_ui
 Native windows controls are built with builders. Each controls can instance a builder using the <code>nwg::CONTROL::builder()</code> method.
 Default values and builder parameters are available in the documentation.<br><br>
 
-The builder <code>build</code> function does not return the new control, instead you must pass a mutable reference to the function. This allows 
+The builder <code>build</code> function does not return the new control, instead you must pass a mutable reference to the function. This allows
 further customization of controls using <code>DerefMut</code> shenanigans.<br><br>
 
 The control build can fail. End the builder call with a <code>?</code> to propagate the error to the caller. <br><br>
@@ -400,7 +400,7 @@ This is exactly what <code>full_bind_event_handler</code> do (with lots, lots of
 Every time an event is raised by the parent or it's children, the callback will be called. Behind the scene, NWG will carefully parse the raw winapi parameters
 and return three simple values: an event <code>Event</code>, it's data (if any) <code>EventData</code>, and the sender window handle <code>ControlHandle</code>.<br><br>
 
-You can see that there are no way to fetch our application data from these parameters. That's why the application data (now behind a RC) 
+You can see that there are no way to fetch our application data from these parameters. That's why the application data (now behind a RC)
 <b>is cloned and passed to the closure</b>. A <code>WeakRef</code> is used here so that <code>Drop</code> can be called.<br><br>
 
 Inside the callback, the developer needs to do three things:
@@ -427,7 +427,7 @@ And that is all for events handling. Thankfully, <b>native-windows-derive</b> ha
 
 <h3>End note</h3>
 
-Right now, you've learned about 50% of NWG. That's enough to build small applications, but there's two intermediate topics that you will want to learn: 
+Right now, you've learned about 50% of NWG. That's enough to build small applications, but there's two intermediate topics that you will want to learn:
 <b>layouts, and resources handling (fonts, image)</b>. For larger applications you will want to look at more advanced topics such as
 <b>UI partials, dynamic control creation, dynamic event binding (and unbinding), and multithreading</b>.<br><br>
 

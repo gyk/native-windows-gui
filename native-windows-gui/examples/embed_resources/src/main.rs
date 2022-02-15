@@ -76,7 +76,7 @@ impl EmbedApp {
     fn set_cursor(&self) {
         nwg::GlobalCursor::set(&self.ice_cursor);
     }
-    
+
     fn say_goodbye(&self) {
         nwg::simple_message("Goodbye", &format!("Goodbye {}", self.name_edit.text()));
         nwg::stop_thread_dispatch();
@@ -86,7 +86,7 @@ impl EmbedApp {
             nwg::Font::remove_memory_font(font);
         }
     }
-    
+
 
 }
 

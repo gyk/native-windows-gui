@@ -27,7 +27,7 @@ const MATERIALS: &'static [&'static str; 5] = &[
 /// A 3D model loaded in GPU memory
 pub struct Model {
     buffer: wgpu::Buffer,
-    
+
     index: Range<wgpu::BufferAddress>,
     positions: Range<wgpu::BufferAddress>,
     normals: Range<wgpu::BufferAddress>,
@@ -65,7 +65,7 @@ struct PhongLight {
 
 struct Uniforms {
     buffer: wgpu::Buffer,
-    
+
     view_offset: wgpu::BufferAddress,
     view: PhongView,
 
@@ -251,12 +251,12 @@ impl CanvasTest {
         // Depth attachment
         //
         let depth_attachment = self.init_depth_texture(device, swapchain_desc);
-        
+
         //
         // Shaders
         // Note: ShaderFlags::VALIDATION will cause a segfault
         //
-        
+
         let vert_src = include_bytes!("phong.vert.spv");
         let (_, vert_aligned, _) = unsafe { vert_src.align_to::<u32>() };
         let frag_src = include_bytes!("phong.frag.spv");
@@ -322,7 +322,7 @@ impl CanvasTest {
                 },
             ],
         });
-    
+
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,
             bind_group_layouts: &[
@@ -405,7 +405,7 @@ impl CanvasTest {
             let mesh = file.simple_mesh_by_index(0)
                 .expect("Failed to fetch find mesh")
                 .expect("Failed to fetch find mesh");
-            
+
             // Load the mesh data
             let acc_indices = file.accessor_data(mesh.indices).unwrap();
             let acc_positions = file.accessor_data(mesh.positions).unwrap();
@@ -422,7 +422,7 @@ impl CanvasTest {
                 let start = align(buffer_offset, acc.component_ty.size() as _);
                 let stop = start + (acc.data.len() as wgpu::BufferAddress);
                 **range = start..stop;
-                
+
                 buffer_offset = stop;
             }
 
@@ -454,7 +454,7 @@ impl CanvasTest {
     fn init_uniforms(&self, device: &wgpu::Device, render: &CanvasRender) -> Uniforms {
         // There's no way to get the minimum uniform buffer offset aligment with wgpu, so we use 256
         let uniform_buffer_aligment = 256;
-        
+
         //
         // Buffer
         //
@@ -462,7 +462,7 @@ impl CanvasTest {
         let view_size = mem::size_of::<PhongView>() as wgpu::BufferAddress;
         let mut view_offset = 0;
 
-        let light = PhongLight { 
+        let light = PhongLight {
             color: [1.0, 1.0, 1.0, 0.1],
             position: [0.0, 0.0, 0.0, 0.0],
             view_pos: [0.0, 0.0, 4.0, 0.0],
@@ -528,7 +528,7 @@ impl CanvasTest {
             ],
             label: Some("light_bind_group"),
         });
-        
+
         Uniforms {
             buffer,
 
@@ -588,7 +588,7 @@ impl CanvasTest {
             height: height,
             present_mode: wgpu::PresentMode::Mailbox,
         };
-    
+
         let swapchain = device.create_swap_chain(&surface, &swapchain_description);
         let render = self.init_render(&device, swapchain_format, &swapchain_description);
         let models = self.init_models(&device, &queue);
@@ -612,7 +612,7 @@ impl CanvasTest {
             models,
 
             io: IoState::default(),
-        
+
             current_material: 0,
             current_model: 0,
             light_position: [0.0, 0.0, 4.0, 0.0],
@@ -628,10 +628,10 @@ impl CanvasTest {
         let (width, height) = self.canvas.size();
         let data = pollster::block_on(self.init_wgpu(width, height));
         *self.canvas_data.borrow_mut() = Some(data);
-        
+
         self.update_uniforms();
         self.render();
-        
+
         self.window.set_visible(true);
     }
 
@@ -653,7 +653,7 @@ impl CanvasTest {
         let proj: Mat4 = glm::perspective_zo(width / height, (60.0f32).to_radians(), 0.1, 10.0);
         let view: Mat4 = glm::look_at_rh(&vec3(0.0, 0.0, 4.0), &vec3(0.0, 0.0, 0.0), &vec3(0.0, 1.0, 0.0));
         let model: Mat4 = glm::rotate_y(&glm::rotate_x(&glm::identity(), data.model_rotation[0]), data.model_rotation[1]);
-        
+
         let ubo: &mut PhongView = &mut uniforms.view;
         ubo.mvp = proj*view*model;
         ubo.model = model;
@@ -792,9 +792,9 @@ impl CanvasTest {
         };
 
         data.current_material = self.material_list.selection().unwrap_or(0);
-        
+
         drop(canvas_data_op);
-        
+
         self.update_uniforms();
         self.render();
     }
@@ -833,21 +833,21 @@ impl CanvasTest {
                 self.render();
             },
             nwg::Event::OnMousePress(btn) => match btn {
-                nwg::MousePressEvent::MousePressLeftDown => { 
+                nwg::MousePressEvent::MousePressLeftDown => {
                     io.dragging_left = true;
-                    io.dragging_right = false; 
+                    io.dragging_right = false;
                     io.dragging_offset = nwg::GlobalCursor::local_position(&self.canvas, None);
                 },
-                nwg::MousePressEvent::MousePressLeftUp => { 
+                nwg::MousePressEvent::MousePressLeftUp => {
                     io.dragging_left = false;
                 },
-                nwg::MousePressEvent::MousePressRightDown => { 
+                nwg::MousePressEvent::MousePressRightDown => {
                     io.dragging_right = true;
                     io.dragging_left = false;
                     io.dragging_offset = nwg::GlobalCursor::local_position(&self.canvas, None);
                 },
-                nwg::MousePressEvent::MousePressRightUp => { 
-                    io.dragging_right = false; 
+                nwg::MousePressEvent::MousePressRightUp => {
+                    io.dragging_right = false;
                 }
             },
             _ => unreachable!()
@@ -871,7 +871,7 @@ pub fn slice_as_bytes<'a, D: Copy>(data: &'a [D]) -> &'a [u8] {
 fn main() {
     nwg::init().expect("Failed to init Native Windows GUI");
 
-    let mut font = nwg::Font::default(); 
+    let mut font = nwg::Font::default();
     nwg::Font::builder()
         .family("Segoe UI")
         .size(20)

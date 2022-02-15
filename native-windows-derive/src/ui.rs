@@ -31,7 +31,7 @@ struct NwgControl<'a> {
 impl<'a> NwgControl<'a> {
 
     fn valid(field: &syn::Field) -> bool {
-        field.attrs.iter().any(|attr| 
+        field.attrs.iter().any(|attr|
             attr.path.get_ident()
                 .map(|ident| ident == "nwg_control" )
                 .unwrap_or(false)
@@ -63,7 +63,7 @@ impl<'a> NwgControl<'a> {
             },
             _ => {}
         }
-        
+
         // Use field type
         match &field.ty {
             syn::Type::Path(p) => match p.path.segments.last() {
@@ -97,7 +97,7 @@ impl<'a> NwgControl<'a> {
             },
             _ => { panic!("Bad expression type for parent of field {}", self.id); }
         };
-        
+
         self.values[i] = parent_expr;
     }
 
@@ -114,7 +114,7 @@ struct NwgResource<'a> {
 impl<'a> NwgResource<'a> {
 
     fn valid(field: &syn::Field) -> bool {
-        field.attrs.iter().any(|attr| 
+        field.attrs.iter().any(|attr|
             attr.path.get_ident()
                 .map(|ident| ident == "nwg_resource" )
                 .unwrap_or(false)
@@ -146,7 +146,7 @@ impl<'a> NwgResource<'a> {
             },
             _ => {}
         }
-        
+
         // Use field type
         match &field.ty {
             syn::Type::Path(p) => match p.path.segments.last() {
@@ -170,7 +170,7 @@ struct NwgLayout<'a> {
 impl<'a> NwgLayout<'a> {
 
     fn valid(field: &syn::Field) -> bool {
-        field.attrs.iter().any(|attr| 
+        field.attrs.iter().any(|attr|
             attr.path.get_ident()
                 .map(|ident| ident == "nwg_layout" )
                 .unwrap_or(false)
@@ -179,7 +179,7 @@ impl<'a> NwgLayout<'a> {
 
     fn parse_type(field: &syn::Field) -> &syn::Ident {
         // TODO: extract type from nwg_layout first
-        
+
         match &field.ty {
             syn::Type::Path(p) => match p.path.segments.last() {
                 Some(seg) => &seg.ident,
@@ -203,7 +203,7 @@ impl<'a> NwgLayout<'a> {
             },
             _ => { panic!("Bad expression type for parent of field {}", self.id); }
         };
-        
+
         self.values[i] = parent_expr;
     }
 
@@ -218,7 +218,7 @@ struct NwgPartial<'a> {
 
 impl<'a> NwgPartial<'a> {
     fn valid(field: &syn::Field) -> bool {
-        field.attrs.iter().any(|attr| 
+        field.attrs.iter().any(|attr|
             attr.path.get_ident()
                 .map(|ident| ident == "nwg_partial" )
                 .unwrap_or(false)
@@ -310,7 +310,7 @@ pub struct NwgUiResources<'a>(&'a NwgUi<'a>);
 impl<'a> ToTokens for NwgUiResources<'a> {
 
     fn to_tokens(&self, tokens: &mut pm2::TokenStream) {
-        
+
         struct ResourceGen<'b> {
             item: &'b NwgResource<'b>
         }
@@ -373,12 +373,12 @@ impl<'a> ToTokens for NwgUiLayouts<'a> {
                 let id = &c.id;
 
                 let item_tk = match &c.layout {
-                    Some(LayoutChild::Grid( GridLayoutChild {col, row, col_span, row_span} )) => 
-                        quote! { 
+                    Some(LayoutChild::Grid( GridLayoutChild {col, row, col_span, row_span} )) =>
+                        quote! {
                             child_item(GridLayoutItem::new(&ui.#id, #col, #row, #col_span, #row_span))
                         },
-                    Some(LayoutChild::Flexbox( FlexboxLayoutChild { param_names, param_values } )) => 
-                        quote! { 
+                    Some(LayoutChild::Flexbox( FlexboxLayoutChild { param_names, param_values } )) =>
+                        quote! {
                             child(&ui.#id)
                             #(.#param_names(#param_values))*
                         },
@@ -460,7 +460,7 @@ impl<'a> ToTokens for NwgUiPartials<'a> {
                         #ty::build_partial(&mut data.#id, Some(&data.#parent))?;
                     }
                 };
-                
+
                 partial_tk.to_tokens(tokens);
             }
         }
@@ -473,7 +473,7 @@ impl<'a> ToTokens for NwgUiPartials<'a> {
         let partials_tk = quote! {
             #(#partials)*
         };
-        
+
         partials_tk.to_tokens(tokens);
     }
 
@@ -495,7 +495,7 @@ impl<'a> NwgUi<'a> {
             syn::Fields::Named(n) => &n.named,
             _ => panic!("Ui structure must have named fields")
         };
-        
+
         let mut controls = Vec::with_capacity(named_fields.len());
         let mut resources = Vec::with_capacity(named_fields.len());
         let mut layouts = Vec::with_capacity(named_fields.len());
@@ -533,7 +533,7 @@ impl<'a> NwgUi<'a> {
                 let id = field.ident.as_ref().unwrap();
                 let ty = NwgResource::parse_type(field);
                 let (names, values) = crate::controls::parameters(field, "nwg_resource");
-                
+
                 let f = NwgResource {
                     id,
                     ty,
@@ -582,7 +582,7 @@ impl<'a> NwgUi<'a> {
                     layouts[i].values.push(partial_parent_expr.clone());
                 } else {
                     panic!("Auto detection of layout parent outside of partial is not yet implemented!");
-                }  
+                }
             }
 
             // Match the layout item to the layout object
@@ -597,7 +597,7 @@ impl<'a> NwgUi<'a> {
                 }
             }
         }
-        
+
         for i in 0..(controls.len()) {
             let top_level = TOP_LEVEL.iter().any(|top| &controls[i].ty == top );
             if top_level {
@@ -612,7 +612,7 @@ impl<'a> NwgUi<'a> {
                 let parent = controls[0..i]
                     .iter().rev()
                     .find(|i| AUTO_PARENT.iter().any(|top| i.ty == top) );
-            
+
                 if let Some(parent) = parent {
                     let parent_id = Some(parent.id.to_string());
                     let parent_expr: syn::Expr = syn::parse_str(&format!("&data.{}", parent.id)).unwrap();
@@ -631,7 +631,7 @@ impl<'a> NwgUi<'a> {
         // Parent Weight
         fn compute_weight(controls: &[NwgControl], index: usize, weight: &mut [u16;2]) {
             match &controls[index].parent_id {
-                Some(p) => 
+                Some(p) =>
                     if let Some(parent_index) = controls.iter().position(|c| &c.id == &p) {
                         compute_weight(controls, parent_index, weight);
                         weight[0] += 1;

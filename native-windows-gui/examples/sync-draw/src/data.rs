@@ -9,7 +9,7 @@ type Size = (u32, u32);
 
 /**
     Different mode in the application.
-    
+
     - Draw: Paint pixels
     - Erase: Remove painted pixel
 */
@@ -58,7 +58,7 @@ impl AppData {
         // Build an event for the instance
         let event_name = format!("SyncDrawEvent{}", instance_id);
         let event = match Win32Event::create(&event_name) {
-            Ok(evt) => Arc::new(evt), 
+            Ok(evt) => Arc::new(evt),
             Err(_) => panic!("Failed to create an event")
         };
 
@@ -193,7 +193,7 @@ impl AppData {
                 if process_id == current_pid {
                     continue;
                 }
-                
+
                 let handle = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, 0, process_id);
                 if handle.is_null() {
                     continue;

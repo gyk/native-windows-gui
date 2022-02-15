@@ -40,7 +40,7 @@ pub fn parameters(field: &syn::Field, attr_id: &'static str) -> (Vec<syn::Ident>
 
 pub fn expand_flags(member_name: &syn::Ident, ty: &syn::Ident, flags: syn::Expr) -> syn::Expr {
     let flags_type = format!("{}Flags", ty);
-    
+
     let flags_value = match &flags {
         syn::Expr::Lit(expr_lit) => match &expr_lit.lit {
             syn::Lit::Str(value) => value,

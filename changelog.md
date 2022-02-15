@@ -25,7 +25,7 @@
 * BREAKING CHANGE: File dialog `get_selected_item` & `get_selected_items` now return `OsString` instead of String to handle some exotic Windows path
 * Added vertical alignment  `v_align` to label (defaults to center)
 * Added vertical alignment `v_align` to combobox (defaults to center)
-* Fixed multi-line label alignment 
+* Fixed multi-line label alignment
 * Added helpers functions to Bitmap and Icons
 * Added the `Monitor` struct to query monitor and screen information
 * Added `center` to the window builder to center a window on screen
@@ -87,7 +87,7 @@
 
 * Fix carriage return in multiline textbox. 100% sure it was working but heh
 * Clipboard internal APi improvement by @DoumanAsh
-* Update some progress bar flags at runtime with `add_flags` and `remove_flags` 
+* Update some progress bar flags at runtime with `add_flags` and `remove_flags`
 * Modal message boxes
 
 1.0.1

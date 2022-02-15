@@ -29,7 +29,7 @@
     </button>
 </div>
 
-    
+
 <div id='toc' class='mobile-hidden'>
 <ul class='chapter'>
 <li><a href='index.html'><b>1.</b> Introduction</a>
@@ -93,7 +93,7 @@
     <div id='page'>
 
         <h1 class="title">Native Windows GUI: Low level events</h1>
-        
+
 
         Winapi implements a bazillion of events and applications are free to define their own. There's no way for NWG to <span style="text-decoration: line-through;">catch</span>
         wrap them all. As a solution, NWG lets you use <code>bind_raw_event_handler</code> to hook the system event queue without parsing the parameters.
@@ -119,12 +119,12 @@
 <span class="w">    </span><span class="p">});</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
-            
-        <br><br> 
-        Raw event handlers work in similar way as default events handers. It works by adding a callback to a window control. This callback then gets called 
+
+        <br><br>
+        Raw event handlers work in similar way as default events handers. It works by adding a callback to a window control. This callback then gets called
         everytime the control receives an event.
         <br/><br/>
-            
+
         <b>The parameters:</b>
         <ul>
             <li><code>handle</code> is the handle of a window control</li>
@@ -153,10 +153,10 @@
         <br/><br/>
 
         Events handlers are always executed from last added to first added. Ie, user hooks will be executed before any NWG hooks.
-        
+
 
         <h3>Freeing raw handlers</h3>
-        
+
         To free a raw event handler call:
         <code>nwg::unbind_raw_event_handler(&handler)</code><br/><br/>
 
@@ -176,7 +176,7 @@
 
 <span class="n">assert</span><span class="o">!</span><span class="p">(</span><span class="n">has_raw_handler</span><span class="p">(</span><span class="o">&amp;</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="mi">9001</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span><span class="w"></span>
 </pre></div>
-            
+
         <br/><br/>
 
     </div>

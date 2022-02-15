@@ -29,7 +29,7 @@ pub struct DataViewApp {
     layout: nwg::GridLayout,
 
     #[nwg_control(item_count: 10, size: (500, 350), list_style: nwg::ListViewStyle::Detailed, focus: true,
-        ex_flags: nwg::ListViewExFlags::GRID | nwg::ListViewExFlags::FULL_ROW_SELECT, 
+        ex_flags: nwg::ListViewExFlags::GRID | nwg::ListViewExFlags::FULL_ROW_SELECT,
     )]
     #[nwg_layout_item(layout: layout, col: 0, col_span: 4, row: 0, row_span: 6)]
     data_view: nwg::ListView,

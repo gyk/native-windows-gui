@@ -117,7 +117,7 @@ impl SimpleMesh {
         let primitives = obj.get("primitives")
             .and_then(|p| p.as_array())
             .ok_or("SimpleMesh does not have a primitive array")?;
-        
+
         if primitives.len() != 1 {
             return Err(format!("SimpleMesh must have on primitives group, found {}", primitives.len()));
         }
@@ -264,7 +264,7 @@ impl GlbFile {
         let mesh = meshes.get(index);
 
         match mesh.map(|m| m.as_object().unwrap() ) {
-            Some(mesh_obj) => 
+            Some(mesh_obj) =>
                 SimpleMesh::from_obj(mesh_obj)
                     .map(|mesh| Some(mesh)),
             None => Ok(None),
@@ -278,7 +278,7 @@ impl GlbFile {
             .and_then(|m| m.as_array())
             .ok_or("meshes array was not found in json".to_owned())?;
 
-        let mesh = meshes.iter().find(|m| 
+        let mesh = meshes.iter().find(|m|
             m.as_object()
              .and_then(|mesh| mesh.get("name") )
              .and_then(|name| name.as_str() )
@@ -287,7 +287,7 @@ impl GlbFile {
         );
 
         match mesh.map(|m| m.as_object().unwrap() ) {
-            Some(mesh_obj) => 
+            Some(mesh_obj) =>
                 SimpleMesh::from_obj(mesh_obj)
                     .map(|mesh| Some(mesh)),
             None => Ok(None),
@@ -301,14 +301,14 @@ impl GlbFile {
             Some(index) => index,
             None => { return Ok(None); }
         };
-        
+
         let meshes = self.json.get("meshes")
             .and_then(|m| m.as_array())
             .ok_or("meshes array was not found in json".to_owned())?;
-        
+
         let mesh = meshes.get(mesh_index);
         match mesh.map(|m| m.as_object().unwrap() ) {
-            Some(mesh_obj) => 
+            Some(mesh_obj) =>
                 SimpleMesh::from_obj(mesh_obj)
                     .map(|mesh| Some(mesh)),
             None => Ok(None),
@@ -318,8 +318,8 @@ impl GlbFile {
     /// Return the data associated with the accessor identified by `id`
     pub fn accessor_data<'a>(&'a self, id: u64) -> Result<AccessorData<'a>, String> {
         let json = &self.json;
-        
-        let accessor_obj = 
+
+        let accessor_obj =
             json.get("accessors")
                 .and_then(|v| v.as_array())
                 .and_then(|v| v.get(id as usize) as Option<&Value> )
@@ -349,13 +349,13 @@ impl GlbFile {
                 .and_then(|v| v.as_u64())
                 .unwrap_or(0);
 
-            let buffer_view_obj = 
+            let buffer_view_obj =
                 json.get("bufferViews")
                     .and_then(|v| v.as_array())
                     .and_then(|v| v.get(buffer_view_id as usize) as Option<&Value> )
                     .and_then(|v| v.as_object())
                     .ok_or(format!("Failed to read buffer view with id {} from accessor id {}", buffer_view_id, id))?;
-            
+
             let byte_length = buffer_view_obj.get("byteLength")
                 .and_then(|v| v.as_u64())
                 .ok_or(format!("Failed to read buffer view byte length for accessor {}", id))? as usize;
@@ -444,7 +444,7 @@ impl GlbFile {
                 let o = offset as usize;
                 let json_str = str::from_utf8(&self.bin[o..(o+json_size)])
                     .map_err(|e| format!("Failed to decode json chunk: {:?}", e) )?;
-                
+
                 serde_json::from_str(json_str)
                     .map_err(|e| format!("Failed to parse json chunk: {:?}", e) )?
             };

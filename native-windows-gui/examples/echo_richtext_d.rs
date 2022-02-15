@@ -21,11 +21,11 @@ pub struct StyleSection {
 #[derive(Default, NwgUi)]
 pub struct EchoApp {
     #[nwg_control(size: (1000, 420), position: (300, 300), title: "Echo", accept_files: true)]
-    #[nwg_events( 
+    #[nwg_events(
         OnInit: [EchoApp::init_text],
-        OnWindowClose: [nwg::stop_thread_dispatch()], 
-        OnFileDrop: [EchoApp::load_text(SELF, EVT_DATA)], 
-        OnKeyEnter: [EchoApp::submit], 
+        OnWindowClose: [nwg::stop_thread_dispatch()],
+        OnFileDrop: [EchoApp::load_text(SELF, EVT_DATA)],
+        OnKeyEnter: [EchoApp::submit],
     )]
     window: nwg::Window,
 

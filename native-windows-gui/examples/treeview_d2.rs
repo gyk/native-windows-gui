@@ -15,8 +15,8 @@ use nwg::NativeUi;
 #[derive(Default, NwgUi)]
 pub struct TreeViewApp {
     #[nwg_control(size: (600, 350), position: (300, 300), title: "TreeView - Musteloidea")]
-    #[nwg_events( 
-        OnWindowClose: [TreeViewApp::exit], 
+    #[nwg_events(
+        OnWindowClose: [TreeViewApp::exit],
         OnInit: [TreeViewApp::load_data],
         OnKeyEnter: [TreeViewApp::end_edit_ok],
         OnKeyEsc: [TreeViewApp::end_edit_cancel],

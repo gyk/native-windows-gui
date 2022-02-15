@@ -29,7 +29,7 @@
     </button>
 </div>
 
-    
+
 <div id='toc' class='mobile-hidden'>
 <ul class='chapter'>
 <li><a href='index.html'><b>1.</b> Introduction</a>
@@ -100,12 +100,12 @@
         all NWG examples are classified as small applications while the test suite is not.
         <br/><br/>
 
-        Note that you don't <b>really</b> have to follow the whole "NativeUi" setup for very small applications, for example see 
+        Note that you don't <b>really</b> have to follow the whole "NativeUi" setup for very small applications, for example see
         <a href="https://github.com/gabdube/native-windows-gui/blob/master/native-windows-gui/examples/basic_barebone.rs">the barebone example</a>.
         <br/><br/>
 
         <h3>Overview</h3>
-        
+
         <ol>
             <li>Define a struct that will hold your non-gui application data</li>
             <li>Define another struct that will hold the GUI data</li>
@@ -123,7 +123,7 @@
         Assuming your application has data that must be stored.
         <br/><br/>
 
-        Next, it's time to define the UI struct. 
+        Next, it's time to define the UI struct.
         <br/><br/>
 
         <h3>Implementing NativeUI</h3>
@@ -141,10 +141,10 @@
 
 <span class="n">nwg</span>::<span class="n">dispatch_thread_events</span><span class="p">();</span><span class="w"></span>
 </pre></div>
-            
+
     <br>
     Once everything is done, there's only initialization that's left to do. As this point everything is straightforward so...<br><br>
-    
+
     1. Call the <code>init</code> function of nwg.<br><br>
 
     2. Initialize the data struct and the Ui struct.<br><br>
@@ -152,7 +152,7 @@
     3. Call the <code>build_ui</code> method defined by <code>NativeUi</code>.<br><br>
 
     4. As the final touch, call <code>dispatch_thread_events</code> to dispatch the events to the application
-            
+
 
     <br><br>
     <br><br>

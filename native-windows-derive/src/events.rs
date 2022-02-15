@@ -41,7 +41,7 @@ struct CallbackDef {
 impl Parse for CallbackDef {
     fn parse(mut input: ParseStream) -> syn::Result<Self> {
         let content;
-        
+
         /// Try to parse the optional `(PATH, CALLBACK_EVENT_ID)` syntax
         fn parse_callback_name(input: &mut ParseStream) -> Result<(Option<syn::Expr>, syn::Ident), syn::Error> {
             let event_content;
@@ -203,7 +203,7 @@ impl ToTokens for ControlEvents {
 
                 #( #partial_callbacks );*
 
-                match _evt { 
+                match _evt {
                     #( #pats => #callbacks ),*
                     _ => {}
                 }
@@ -217,13 +217,13 @@ impl ToTokens for ControlEvents {
 
                         if let Some(evt_ui) = evt_ui.upgrade() {
                             #( #partial_callbacks );*
-                            match _evt { 
+                            match _evt {
                                 #( #pats => #callbacks ),*
                                 _ => {}
                             }
                         }
                     };
-                    
+
                     ui.default_handlers.borrow_mut().push(full_bind_event_handler(handle, handle_events));
                 }
             }
@@ -252,7 +252,7 @@ impl<'a> ToTokens for EventCallbackCol<'a> {
                 quote!{ if &_handle == &#member { #path(#args) } }
             }
             _ => {
-                
+
                 // Group callbacks by members
                 let mut members_callbacks: HashMap<&syn::Expr, Vec<(&syn::Path, &Args)>> = HashMap::new();
                 for c in cb.iter() {
@@ -319,7 +319,7 @@ fn top_level_window(field: &syn::Field) -> bool {
         syn::Type::Path(p) => {
             let seg_len = p.path.segments.len();
             let seg = &p.path.segments[seg_len - 1];
-            
+
             TOP_LEVEL.iter().any(|top| seg.ident == top)
         },
         _ => false
@@ -339,7 +339,7 @@ fn map_callback_args(member: &syn::Ident, args: &Option<Punctuated<syn::Ident, T
         let pos = values.iter().position(|v| &a == &v );
         match pos {
             Some(0) | Some(5) => { p.push(cache[&0].clone()); },
-            Some(1) => { 
+            Some(1) => {
                 let param = format!("&evt_ui.{}", member);
                 p.push(syn::parse_str(&param).unwrap());
             },
@@ -350,7 +350,7 @@ fn map_callback_args(member: &syn::Ident, args: &Option<Punctuated<syn::Ident, T
             None => panic!("Unknown callback argument: {}. Should be one of those values: {:?}", a, values)
         }
     }
-    
+
     p
 }
 

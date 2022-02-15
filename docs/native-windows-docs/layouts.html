@@ -28,7 +28,7 @@
     </button>
 </div>
 
-    
+
 <div id='toc' class='mobile-hidden'>
 <ul class='chapter'>
 <li><a href='index.html'><b>1.</b> Introduction</a>
@@ -104,10 +104,10 @@ Native windows GUI includes 2 type of layouts: BoxLayout and GridLayout.<br>
 To learn how to use layouts with <code>native-windows-derive</code> see <a href="nwd_layouts.html">the derive section</a>
 <br><br>
 
-<h3>Basic usage</h3>  
+<h3>Basic usage</h3>
 
 Just like most NWG objects, layouts are created using a builder api. A layout uses 1 parent control and 0 or more children control. For children or for the parent,
-the layout only accepts window-like controls (<b>valid</b>: buttons, edit, etc. <b>not valid</b>: menu, timer, notice, etc).<br><br>  
+the layout only accepts window-like controls (<b>valid</b>: buttons, edit, etc. <b>not valid</b>: menu, timer, notice, etc).<br><br>
 
 Layouts implement default. A default layout must first be initialized with a builder. Trying to call methods on default builders will cause a panic.<br><br>
 
@@ -117,7 +117,7 @@ Layouts resize their children automatically when the parent control is resized. 
 
 Layouts uses interior mutability, as such it's always possible to edit their properties or their children <br><br>
 
-<h3>Gridlayout</h3>  
+<h3>Gridlayout</h3>
 
 The GridLayout splits the parent control into an equally spaced grid. Children are placed in that grid using a [row, column] index.
 Optionally, children controls can span across more than one row/column.<br><br>
@@ -149,7 +149,7 @@ A grid layout example:
 
 <br><br>
 
-<h3>FlexboxLayout</h3>  
+<h3>FlexboxLayout</h3>
 
 Flexbox layout uses <a href="https://github.com/vislyhq/stretch">stretch</a> to align children controls in a row or in column. <br><br>
 
@@ -190,7 +190,7 @@ A flexbox layout example:
 <span class="w">    </span><span class="n">layout</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
-<br>    
+<br>
 
 Flexbox with sub layouts:
 
@@ -258,14 +258,14 @@ Flexbox with sub layouts:
 <span style="color: #bbbbbb">        </span>.unwrap();<span style="color: #bbbbbb"></span>
 }<span style="color: #bbbbbb"></span>
 </pre>
-    
-    
-    
-    
+
+
+
+
 
 <br><br>
 
-<h3>DynLayout</h3>  
+<h3>DynLayout</h3>
 
 DynLayout layout works like Dynamic Layout in MFC.<br><br>
 

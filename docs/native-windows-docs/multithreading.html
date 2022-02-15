@@ -30,7 +30,7 @@
     </button>
 </div>
 
-    
+
 <div id='toc' class='mobile-hidden'>
 <ul class='chapter'>
 <li><a href='index.html'><b>1.</b> Introduction</a>
@@ -99,7 +99,7 @@
         This is a problem is an application has a method that blocks the GUI thread (ex: reading a large file) because doing so will make the UI
         unusable for the duration of the method. This section will explain how NWG fix this problem.<br><br>
 
-        <h3>The notice object</h3>  
+        <h3>The notice object</h3>
 
         Assuming there is a task that will block the UI thread. It's obvious the first step would be to just move this task into another thread.
         But then, how does the main thread will know when the task is completed? The answer is the <code>Notice</code> object.<br><br>
@@ -137,11 +137,11 @@
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
-        
+
         <br>
-            
+
         In this example, a heavy compute operation is started off the main thread after window initialization.<br>
-        
+
         <ol>
             <li><code>on_init</code> generates a <code>NoticeSender</code> from the application notice</li>
             <li>The <code>NoticeSender</code> is sent to another thread</li>
@@ -152,7 +152,7 @@
 
         <br>
 
-        <h3>Running windows on multiple threads</h3> 
+        <h3>Running windows on multiple threads</h3>
 
         NWG does not have any global state. As such it's possible to create as many GUI thread as you might want. Each GUI thread can have its own windows.
         Blocking one of the GUI thread won't block the second. This is useful when implementing dialogs.<br><br>

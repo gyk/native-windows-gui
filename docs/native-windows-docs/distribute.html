@@ -30,7 +30,7 @@
     </button>
 </div>
 
-    
+
 <div id='toc' class='mobile-hidden'>
 <ul class='chapter'>
 <li><a href='index.html'><b>1.</b> Introduction</a>
@@ -101,7 +101,7 @@
         <h3>Disable the console</h3>
 
         By default Rust binary will show a console. Include <br><br>
-        
+
         <code>#![windows_subsystem = "windows"]</code>
 
         <br><br>
@@ -111,7 +111,7 @@
 
         <h3>Include MSVC dependencies</h3>
 
-        Assuming you are using the <b>MSVC</b> toolchain (you should), the rust binary won't include the CRT dependencies (see <a href="https://github.com/rust-lang/rfcs/blob/master/text/1721-crt-static.md">link</a>). This will may stop 
+        Assuming you are using the <b>MSVC</b> toolchain (you should), the rust binary won't include the CRT dependencies (see <a href="https://github.com/rust-lang/rfcs/blob/master/text/1721-crt-static.md">link</a>). This will may stop
         your binary from running on other computer. To fix this, create a file called <code>.cargo\config</code> in your projects root directory with the following contents:<br><br>
 
 <div class="highlight"><pre style="width:auto;"><span></span><span class="k">[target.x86_64-pc-windows-msvc]</span>
@@ -119,7 +119,7 @@
 <span class="k">[target.i686-pc-windows-msvc]</span>
 <span class="n">rustflags</span> <span class="o">=</span> <span class="k">[&quot;-Ctarget-feature=+crt-static&quot;]</span>
 </pre></div>
-            
+
 
         <br><br><br>
     </div>

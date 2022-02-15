@@ -134,7 +134,7 @@ impl OpenGlCanvas {
             gl::EnableVertexAttribArray(1);
 
             let stride = mem::size_of::<f32>() * 4;
-            let color_offset = 8 as *const c_void; 
+            let color_offset = 8 as *const c_void;
             gl::VertexAttribPointer(0, 2, gl::FLOAT, 0, stride as i32, ptr::null());
             gl::VertexAttribPointer(1, 2, gl::FLOAT, 0, stride as i32, color_offset);
 
@@ -166,12 +166,12 @@ impl OpenGlCanvas {
         for _ in 0..(BRUSH*BRUSH) {
             data.push(color);
         }
-        
+
         unsafe {
             gl::TexSubImage2D(
                 gl::TEXTURE_2D,
                 0,                        // mip level
-                x, y,                     // offset 
+                x, y,                     // offset
                 HALF_BRUSH , HALF_BRUSH,  //size
                 gl::RGBA, gl::UNSIGNED_BYTE,
                 data.as_ptr() as *mut c_void
@@ -219,7 +219,7 @@ impl OpenGlCanvas {
         }
 
         buffer
-    } 
+    }
 
     /// Sets the texture content of the canvas
     /// Panics if the size of data is not enough to fill the texture or if the new texture size do not match the old
@@ -227,7 +227,7 @@ impl OpenGlCanvas {
         self.resize_texture(width, height, false);
 
         let texture = self.texture.borrow();
-        
+
         unsafe {
             gl::TexSubImage2D(
                 gl::TEXTURE_2D,
@@ -253,7 +253,7 @@ impl OpenGlCanvas {
             gl::GenTextures(1, &mut tex);
             gl::BindTexture(gl::TEXTURE_2D, tex);
             gl::TexStorage2D(gl::TEXTURE_2D, 1, gl::RGBA8, width as _, height as _);
-            
+
             if preserve {
                 clear_texture(width, height);
 
@@ -272,7 +272,7 @@ impl OpenGlCanvas {
                     1
                 );
             }
-            
+
             // Free / update the application resources
             gl::DeleteTextures(1, &texture.handle);
             texture.handle = tex;
@@ -297,7 +297,7 @@ unsafe fn check_shader_status(shader: u32) {
         logs.set_len(error_length as usize);
 
         gl::GetShaderInfoLog(shader, error_length, &mut error_length, logs.as_mut_ptr());
-        
+
         panic!("\n\n{}\n\n", CStr::from_ptr(logs.as_ptr()).to_str().unwrap());
     }
 }
@@ -316,7 +316,7 @@ unsafe fn check_program_status(program: u32) {
         logs.set_len(error_length as usize);
 
         gl::GetProgramInfoLog(program, error_length, &mut error_length, logs.as_mut_ptr());
-        
+
         panic!("\n\n{}\n\n", CStr::from_ptr(logs.as_ptr()).to_str().unwrap());
     }
 }
@@ -331,7 +331,7 @@ unsafe fn clear_texture(w: u32, h: u32) {
     gl::TexSubImage2D(
         gl::TEXTURE_2D,
         0,      // mip level
-        0, 0,   // offset 
+        0, 0,   // offset
         w as _, h as _,
         gl::RGBA, gl::UNSIGNED_BYTE,
         texture_data.as_mut_ptr() as *mut c_void
@@ -362,7 +362,7 @@ in vec2 uv;
 out vec4 outColor;
 
 uniform sampler2D target;
- 
+
 void main() {
     outColor = texture(target, uv);
 }

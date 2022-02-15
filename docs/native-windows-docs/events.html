@@ -28,7 +28,7 @@
     </button>
 </div>
 
-    
+
 <div id='toc' class='mobile-hidden'>
 <ul class='chapter'>
 <li><a href='index.html'><b>1.</b> Introduction</a>
@@ -95,7 +95,7 @@
 
         NWG handles events by hooking the system events queue. This means that, unlike other GUI toolkit,
         events are not really bound to a control. Instead, binding events is done <b>globally</b>.<br/><br/>
-        
+
         Because of the Rust borrow checker and the way events are handled internally by the windows API, any "traditional"
         way to bind events ends up being too complicated. The two last version of NWG taught me that.<br/><br/>
 
@@ -129,10 +129,10 @@
 <span class="w">    </span>
 <span class="p">});</span><span class="w"></span>
 </pre></div>
-            
-            
 
-        <h3>Hooking the event queue</h3>  
+
+
+        <h3>Hooking the event queue</h3>
 
         Hooking the system events queue can be done by calling one of those two functions:
         <ul>
@@ -140,7 +140,7 @@
             <li><code>bind_event_handler(control_handle, parent_handle, callback)</code></li>
         </ul>
 
-        The first one <b>"full"</b> will hook the events of a control and ALL its children. 
+        The first one <b>"full"</b> will hook the events of a control and ALL its children.
         It's the one that will be used the most; At least once for every top level window.<br><br>
 
         The other one will hook the events of a control and its parent. Why the control and the parent?
@@ -183,7 +183,7 @@
         <code>EventData</code> is also an enum. Most NWG events don't use data (<code>EventData::NoData</code>), this is because the raw data
         that comes with winapi events are often limited to the size of 2 <code>usize</code>. For example, instead of passing the width and height
         on a <code>Event::OnResize</code>, it's better to call <code>control.size()</code> in the callback.
-        
+
         <br><br>
 
         <code>Handle</code> is the handle of the control. The events callback is not aware of the control in the application, as such
@@ -192,11 +192,11 @@
         As such it's up to the developer to check which controller sent the event.
 
         <br><br>
-        
+
         <h3>EventHandler</h3>
 
         All event hooking funtions return a <code>EventHandler</code> object. This object is an opaque handle over the event hook and all the hooked controls.
-        Ignoring this value means that the callback and all its data will be leaked! In smaller appplication, it's perfectly fine to just ignore it, 
+        Ignoring this value means that the callback and all its data will be leaked! In smaller appplication, it's perfectly fine to just ignore it,
         but in large, long-running applications it's better to free the handler when it is no longer needed. This is done with: <br><br>
 
         <code>nwg::unbind_event_handler(&handler)</code>
@@ -204,7 +204,7 @@
         <br><br>
 
         Events handler are not freed automatically when they go out of scope!
-        
+
         <br><br><br><br>
 
     </div>

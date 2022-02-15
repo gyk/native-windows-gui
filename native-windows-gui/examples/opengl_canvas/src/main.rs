@@ -42,7 +42,7 @@ impl OpenGlCanvas {
     pub fn create_context(&self) {
         use std::ffi::c_void;
         use std::{mem, ptr};
-        
+
         unsafe {
             let ctx = ContextBuilder::new()
                 .with_gl(GlRequest::Specific(Api::OpenGl, (3, 3)))
@@ -51,7 +51,7 @@ impl OpenGlCanvas {
                 .expect("Failed to build opengl context")
                 .make_current()
                 .expect("Failed to set opengl context as current");
-        
+
             // Load the function pointers
             gl::Clear::load_with(|s| ctx.get_proc_address(s) as *const _);
             gl::ClearColor::load_with(|s| ctx.get_proc_address(s) as *const _ );
@@ -116,11 +116,11 @@ impl OpenGlCanvas {
             gl::EnableVertexAttribArray(1);
 
             let stride = mem::size_of::<f32>() * 5;
-            let color_offset = 8 as *const c_void; 
+            let color_offset = 8 as *const c_void;
             gl::VertexAttribPointer(0, 2, gl::FLOAT, 0, stride as i32, ptr::null());
             gl::VertexAttribPointer(1, 4, gl::FLOAT, 0, stride as i32, color_offset);
-            
-           
+
+
             *self.ctx.borrow_mut() = Some(ctx);
         }
     }
@@ -213,7 +213,7 @@ impl ExternCanvas {
 
         self.window.invalidate();
     }
-    
+
     pub fn select_tri_color(&self) {
         use std::mem;
 
@@ -254,7 +254,7 @@ mod extern_canvas_ui {
     impl nwg::NativeUi<ExternCanvasUi> for ExternCanvas {
         fn build_ui(mut data: ExternCanvas) -> Result<ExternCanvasUi, nwg::NwgError> {
             use nwg::Event as E;
-            
+
             // Resources
             nwg::ColorDialog::builder()
                 .build(&mut data.color_dialog)?;
@@ -336,7 +336,7 @@ mod extern_canvas_ui {
                 .child(3, 0, &ui.choose_color_btn1)
                 .child(3, 1, &ui.choose_color_btn2)
                 .build(&ui.layout)?;
-            
+
             return Ok(ui);
         }
     }
@@ -396,7 +396,7 @@ precision mediump float;
 in vec4 color;
 
 out vec4 outColor;
- 
+
 void main() {
     outColor = color;
 }
