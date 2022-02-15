@@ -5,13 +5,12 @@
     Requires the following features: `cargo run --example dialog_multithreading_d --features "notice"`
 */
 
-extern crate native_windows_gui as nwg;
 extern crate native_windows_derive as nwd;
+extern crate native_windows_gui as nwg;
 
 use nwd::NwgUi;
 use nwg::NativeUi;
-use std::{thread, cell::RefCell};
-
+use std::{cell::RefCell, thread};
 
 /// The dialog UI
 #[derive(Default, NwgUi)]
@@ -32,7 +31,6 @@ pub struct YesNoDialog {
 }
 
 impl YesNoDialog {
-
     /// Create the dialog UI on a new thread. The dialog result will be returned by the thread handle.
     /// To alert the main GUI that the dialog completed, this function takes a notice sender object.
     fn popup(sender: nwg::NoticeSender) -> thread::JoinHandle<String> {
@@ -40,12 +38,12 @@ impl YesNoDialog {
             // Create the UI just like in the main function
             let app = YesNoDialog::build_ui(Default::default()).expect("Failed to build UI");
             nwg::dispatch_thread_events();
-            
+
             // Notice the main thread that the dialog completed
             sender.notice();
 
             // Return the dialog data
-            app.data.take().unwrap_or("Cancelled!".to_owned())
+            app.data.take().unwrap_or_else(|| "Cancelled!".to_owned())
         })
     }
 
@@ -63,9 +61,7 @@ impl YesNoDialog {
 
         self.window.close();
     }
-
 }
-
 
 /// The Main UI
 #[derive(Default, NwgUi)]
@@ -89,7 +85,6 @@ pub struct ThreadingApp {
 }
 
 impl ThreadingApp {
-
     fn exit(&self) {
         nwg::stop_thread_dispatch();
     }
@@ -105,16 +100,12 @@ impl ThreadingApp {
         self.button.set_enabled(true);
 
         let data = self.dialog_data.borrow_mut().take();
-        match data {
-            Some(handle) => {
-                let dialog_result = handle.join().unwrap();
-                self.name_edit.set_text(&dialog_result);
-                self.button.set_focus();
-            },
-            None => {}
+        if let Some(handle) = data {
+            let dialog_result = handle.join().unwrap();
+            self.name_edit.set_text(&dialog_result);
+            self.button.set_focus();
         }
     }
-
 }
 
 fn main() {
@@ -124,5 +115,4 @@ fn main() {
 
     let _app = ThreadingApp::build_ui(Default::default()).expect("Failed to build UI");
     nwg::dispatch_thread_events();
-
 }

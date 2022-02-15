@@ -4,15 +4,13 @@
     Requires the following features: `cargo run --example drop_files_d --features "textbox"`
 */
 
-
-extern crate native_windows_gui as nwg;
 extern crate native_windows_derive as nwd;
+extern crate native_windows_gui as nwg;
 
 use nwd::NwgUi;
 use nwg::NativeUi;
 
 use std::fs;
-
 
 #[derive(Default, NwgUi)]
 pub struct DropApp {
@@ -35,7 +33,7 @@ impl DropApp {
         let mut text = String::with_capacity(1000);
 
         for file in drop.files() {
-            text.push_str(&fs::read_to_string(file).unwrap_or("Invalid file".into()));
+            text.push_str(&fs::read_to_string(file).unwrap_or_else(|_| "Invalid file".into()));
         }
 
         self.text.set_text(&text);

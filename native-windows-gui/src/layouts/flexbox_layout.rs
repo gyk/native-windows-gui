@@ -1,17 +1,22 @@
 use crate::controls::ControlHandle;
+use crate::win32::window::{
+    bind_raw_event_handler_inner, unbind_raw_event_handler, RawEventHandler,
+};
 use crate::win32::window_helper as wh;
-use crate::win32::window::{RawEventHandler, unbind_raw_event_handler, bind_raw_event_handler_inner};
 use crate::NwgError;
+use std::{
+    cell::{Ref, RefCell, RefMut},
+    ptr,
+    rc::Rc,
+};
 use winapi::shared::windef::HWND;
-use std::{ptr, rc::Rc, cell::{RefCell, RefMut, Ref} };
 
 use stretch::{
-    number::Number,
-    geometry::{Point, Size, Rect},
+    geometry::{Point, Rect, Size},
     node::{Node, Stretch},
-    style::*
+    number::Number,
+    style::*,
 };
-
 
 #[derive(Debug)]
 pub struct FlexboxLayoutItem {
@@ -22,11 +27,14 @@ pub struct FlexboxLayoutItem {
 
 pub enum FlexboxLayoutChild {
     Item(FlexboxLayoutItem),
-    Flexbox(FlexboxLayout)
+    Flexbox(FlexboxLayout),
 }
 
 impl FlexboxLayoutChild {
-    fn modify_style<F>(&mut self, fnc: F) where F: Fn(&mut Style) {
+    fn modify_style<F>(&mut self, fnc: F)
+    where
+        F: Fn(&mut Style),
+    {
         match self {
             FlexboxLayoutChild::Item(item) => fnc(&mut item.style),
             FlexboxLayoutChild::Flexbox(layout) => fnc(&mut layout.inner.borrow_mut().style),
@@ -43,7 +51,6 @@ struct FlexboxLayoutInner {
     parent_layout: Option<FlexboxLayout>,
 }
 
-
 /**
     A flexbox layout that organizes the children control in a parent control.
     Flexbox uses the stretch library internally ( https://github.com/vislyhq/stretch ).
@@ -52,11 +59,10 @@ struct FlexboxLayoutInner {
 */
 #[derive(Clone)]
 pub struct FlexboxLayout {
-    inner: Rc<RefCell<FlexboxLayoutInner>>
+    inner: Rc<RefCell<FlexboxLayoutInner>>,
 }
 
 impl FlexboxLayout {
-
     pub fn builder() -> FlexboxLayoutBuilder {
         let layout = FlexboxLayoutInner {
             base: ptr::null_mut(),
@@ -66,7 +72,12 @@ impl FlexboxLayout {
             parent_layout: None,
         };
 
-        FlexboxLayoutBuilder { layout, current_index: None, auto_size: true, auto_spacing: Some(5) }
+        FlexboxLayoutBuilder {
+            layout,
+            current_index: None,
+            auto_size: true,
+            auto_spacing: Some(5),
+        }
     }
 
     /**
@@ -81,7 +92,7 @@ impl FlexboxLayout {
             panic!("Flexbox layout is not yet initialized!");
         }
 
-        inner.style.clone()
+        inner.style
     }
 
     /**
@@ -106,7 +117,11 @@ impl FlexboxLayout {
         * If the control is not a window-like control
         * If the layout was not initialized
     */
-    pub fn add_child<W: Into<ControlHandle>>(&self, c: W, style: Style) -> Result<(), stretch::Error> {
+    pub fn add_child<W: Into<ControlHandle>>(
+        &self,
+        c: W,
+        style: Style,
+    ) -> Result<(), stretch::Error> {
         {
             let mut inner = self.inner.borrow_mut();
             if inner.base.is_null() {
@@ -114,8 +129,11 @@ impl FlexboxLayout {
             }
 
             let item = FlexboxLayoutItem {
-                control: c.into().hwnd().expect("Control must be window like (HWND handle)"),
-                style
+                control: c
+                    .into()
+                    .hwnd()
+                    .expect("Control must be window like (HWND handle)"),
+                style,
             };
 
             inner.children.push(FlexboxLayoutChild::Item(item));
@@ -138,13 +156,22 @@ impl FlexboxLayout {
             panic!("Flexbox layout is not yet initialized!");
         }
 
-        let handle = c.into().hwnd().expect("Control must be window like (HWND handle)");
-        let index = inner.children.iter()
+        let handle = c
+            .into()
+            .hwnd()
+            .expect("Control must be window like (HWND handle)");
+        let index = inner
+            .children
+            .iter()
             .position(|child| child.is_item() && child.as_item().control == handle);
 
         match index {
-            Some(i) => { inner.children.remove(i); },
-            None => { panic!("Control was not found in layout"); }
+            Some(i) => {
+                inner.children.remove(i);
+            }
+            None => {
+                panic!("Control was not found in layout");
+            }
         }
     }
 
@@ -162,8 +189,14 @@ impl FlexboxLayout {
             panic!("Flexbox layout is not yet initialized!");
         }
 
-        let handle = c.into().hwnd().expect("Control must be window like (HWND handle)");
-        inner.children.iter().any(|child| child.is_item() && child.as_item().control == handle)
+        let handle = c
+            .into()
+            .hwnd()
+            .expect("Control must be window like (HWND handle)");
+        inner
+            .children
+            .iter()
+            .any(|child| child.is_item() && child.as_item().control == handle)
     }
 
     /**
@@ -179,9 +212,7 @@ impl FlexboxLayout {
             panic!("Flexbox layout is not yet initialized!");
         }
 
-        FlexboxLayoutChildren {
-            inner
-        }
+        FlexboxLayoutChildren { inner }
     }
 
     /**
@@ -199,9 +230,7 @@ impl FlexboxLayout {
             panic!("Flexbox layout is not yet initialized!");
         }
 
-        FlexboxLayoutChildrenMut {
-            inner
-        }
+        FlexboxLayoutChildrenMut { inner }
     }
 
     /**
@@ -218,8 +247,7 @@ impl FlexboxLayout {
 
         if let Some(parent_layout) = &inner.parent_layout {
             parent_layout.fit()
-        }
-        else {
+        } else {
             let (w, h) = unsafe { wh::get_window_size(inner.base) };
             self.update_layout(w, h, (0, 0))
         }
@@ -227,21 +255,25 @@ impl FlexboxLayout {
 
     // Utility function to compile tree of children nodes for layout purposes
     // Also returns the total number of children items to allow cleaner deferred positioning
-    fn build_child_nodes(children: &Vec<FlexboxLayoutChild>, stretch: &mut Stretch) -> Result<(usize, Vec<Node>), stretch::Error> {
+    fn build_child_nodes(
+        children: &[FlexboxLayoutChild],
+        stretch: &mut Stretch,
+    ) -> Result<(usize, Vec<Node>), stretch::Error> {
         let mut nodes = Vec::new();
         let mut item_count = 0;
 
         for child in children.iter() {
             match child {
-                FlexboxLayoutChild::Item(child) =>{
+                FlexboxLayoutChild::Item(child) => {
                     nodes.push(stretch.new_node(child.style, Vec::new())?);
                     item_count += 1;
-                },
+                }
                 FlexboxLayoutChild::Flexbox(child) => {
-                    let (child_count, child_nodes) = FlexboxLayout::build_child_nodes(child.children().children(), stretch)?;
+                    let (child_count, child_nodes) =
+                        FlexboxLayout::build_child_nodes(child.children().children(), stretch)?;
                     nodes.push(stretch.new_node(child.style(), child_nodes)?);
                     item_count += child_count;
-                },
+                }
             };
         }
 
@@ -250,7 +282,14 @@ impl FlexboxLayout {
 
     // Applies the calculated item positions for this layout
     // Uses deferred window positioning to prevent rendering artefacts
-    fn apply_layout_deferred(positioner: &mut wh::DeferredWindowPositioner, stretch: &mut Stretch, nodes: Vec<Node>, children: &Vec<FlexboxLayoutChild>, last_handle: &mut Option<HWND>, offset: (i32, i32)) -> Result<(), stretch::Error> {
+    fn apply_layout_deferred(
+        positioner: &mut wh::DeferredWindowPositioner,
+        stretch: &mut Stretch,
+        nodes: Vec<Node>,
+        children: &[FlexboxLayoutChild],
+        last_handle: &mut Option<HWND>,
+        offset: (i32, i32),
+    ) -> Result<(), stretch::Error> {
         use FlexboxLayoutChild as Child;
 
         for (node, child) in nodes.into_iter().zip(children.iter()) {
@@ -259,19 +298,35 @@ impl FlexboxLayout {
             let Size { width, height } = layout.size;
 
             let (x, y) = unsafe { crate::win32::high_dpi::logical_to_physical_float(x, y) };
-            let (width, height) = unsafe { crate::win32::high_dpi::logical_to_physical_float(width, height) };
+            let (width, height) =
+                unsafe { crate::win32::high_dpi::logical_to_physical_float(width, height) };
 
             match child {
                 Child::Item(child) => {
-                    positioner.defer_pos(child.control, last_handle.unwrap_or(std::ptr::null_mut()), x as i32 + offset.0, y as i32 + offset.1, width as i32, height as i32).ok();
+                    positioner
+                        .defer_pos(
+                            child.control,
+                            last_handle.unwrap_or(std::ptr::null_mut()),
+                            x as i32 + offset.0,
+                            y as i32 + offset.1,
+                            width as i32,
+                            height as i32,
+                        )
+                        .ok();
                     last_handle.replace(child.control);
-                },
+                }
                 Child::Flexbox(child) => {
                     let children_nodes = stretch.children(node)?;
-                    FlexboxLayout::apply_layout_deferred(positioner, stretch, children_nodes, child.children().children(), last_handle, (x as i32, y as i32))?;
+                    FlexboxLayout::apply_layout_deferred(
+                        positioner,
+                        stretch,
+                        children_nodes,
+                        child.children().children(),
+                        last_handle,
+                        (x as i32, y as i32),
+                    )?;
                 }
             }
-
         }
 
         Ok(())
@@ -279,7 +334,13 @@ impl FlexboxLayout {
 
     // Applies the calculated item positions for this layout
     // Uses immediate window positioning, which might cause visual artefacts in some cases
-    fn apply_layout_immediate(stretch: &mut Stretch, nodes: Vec<Node>, children: &Vec<FlexboxLayoutChild>, last_handle: &mut Option<HWND>, offset: (i32, i32)) -> Result<(), stretch::Error> {
+    fn apply_layout_immediate(
+        stretch: &mut Stretch,
+        nodes: Vec<Node>,
+        children: &[FlexboxLayoutChild],
+        last_handle: &mut Option<HWND>,
+        offset: (i32, i32),
+    ) -> Result<(), stretch::Error> {
         use FlexboxLayoutChild as Child;
 
         for (node, child) in nodes.into_iter().zip(children.iter()) {
@@ -289,46 +350,75 @@ impl FlexboxLayout {
 
             match child {
                 Child::Item(child) => unsafe {
-                    wh::set_window_position(child.control, x as i32 + offset.0, y as i32 + offset.1);
+                    wh::set_window_position(
+                        child.control,
+                        x as i32 + offset.0,
+                        y as i32 + offset.1,
+                    );
                     wh::set_window_size(child.control, width as u32, height as u32, false);
                     wh::set_window_after(child.control, *last_handle);
                     last_handle.replace(child.control);
                 },
                 Child::Flexbox(child) => {
                     let children_nodes = stretch.children(node)?;
-                    FlexboxLayout::apply_layout_immediate(stretch, children_nodes, child.children().children(), last_handle, (x as i32, y as i32))?;
+                    FlexboxLayout::apply_layout_immediate(
+                        stretch,
+                        children_nodes,
+                        child.children().children(),
+                        last_handle,
+                        (x as i32, y as i32),
+                    )?;
                 }
             }
-
         }
 
         Ok(())
     }
 
-    fn update_layout(&self, width: u32, height: u32, offset: (i32, i32)) -> Result<(), stretch::Error> {
+    fn update_layout(
+        &self,
+        width: u32,
+        height: u32,
+        offset: (i32, i32),
+    ) -> Result<(), stretch::Error> {
         let inner = self.inner.borrow();
-        if inner.base.is_null() || inner.children.len() == 0 {
+        if inner.base.is_null() || inner.children.is_empty() {
             return Ok(());
         }
 
         let mut stretch = Stretch::new();
         let (item_count, nodes) = FlexboxLayout::build_child_nodes(&inner.children, &mut stretch)?;
 
-        let mut style = inner.style.clone();
-        style.size = Size { width: Dimension::Points(width as f32), height: Dimension::Points(height as f32) };
+        let mut style = inner.style;
+        style.size = Size {
+            width: Dimension::Points(width as f32),
+            height: Dimension::Points(height as f32),
+        };
         let node = stretch.new_node(style, nodes.clone())?;
 
         stretch.compute_layout(node, Size::undefined())?;
 
         // Keep a fallback case to prevent panics if the layout is too large to be deferred
         if let Ok(mut positioner) = wh::DeferredWindowPositioner::new(item_count as i32) {
-            let layout_result = FlexboxLayout::apply_layout_deferred(&mut positioner, &mut stretch, nodes, self.children().children(), &mut None, offset);
+            let layout_result = FlexboxLayout::apply_layout_deferred(
+                &mut positioner,
+                &mut stretch,
+                nodes,
+                self.children().children(),
+                &mut None,
+                offset,
+            );
             positioner.end();
 
             layout_result
-        }
-        else {
-            FlexboxLayout::apply_layout_immediate(&mut stretch, nodes, self.children().children(), &mut None, offset)
+        } else {
+            FlexboxLayout::apply_layout_immediate(
+                &mut stretch,
+                nodes,
+                self.children().children(),
+                &mut None,
+                offset,
+            )
         }
     }
 }
@@ -337,11 +427,10 @@ pub struct FlexboxLayoutBuilder {
     layout: FlexboxLayoutInner,
     current_index: Option<usize>,
     auto_size: bool,
-    auto_spacing: Option<u32>
+    auto_spacing: Option<u32>,
 }
 
 impl FlexboxLayoutBuilder {
-
     /// Set the layout parent. The handle must be a window object otherwise the function will panic
     pub fn parent<W: Into<ControlHandle>>(mut self, p: W) -> FlexboxLayoutBuilder {
         self.layout.base = p.into().hwnd().expect("Parent must be HWND");
@@ -355,7 +444,7 @@ impl FlexboxLayoutBuilder {
 
         let item = FlexboxLayoutItem {
             control: child.into().hwnd().unwrap(),
-            style: Style::default()
+            style: Style::default(),
         };
 
         self.layout.children.push(FlexboxLayoutChild::Item(item));
@@ -367,7 +456,9 @@ impl FlexboxLayoutBuilder {
     pub fn child_layout(mut self, child: &FlexboxLayout) -> FlexboxLayoutBuilder {
         self.current_index = Some(self.layout.children.len());
 
-        self.layout.children.push(FlexboxLayoutChild::Flexbox(child.clone()));
+        self.layout
+            .children
+            .push(FlexboxLayoutChild::Flexbox(child.clone()));
 
         self
     }
@@ -521,7 +612,6 @@ impl FlexboxLayoutBuilder {
         self
     }
 
-
     /**
         Directly set the style parameter of the current child. Panics if `child` was not called before.
 
@@ -532,7 +622,10 @@ impl FlexboxLayoutBuilder {
         self
     }
 
-    fn modify_current_child_style<F>(&mut self, fnc: F) where F: Fn(&mut Style) {
+    fn modify_current_child_style<F>(&mut self, fnc: F)
+    where
+        F: Fn(&mut Style),
+    {
         assert!(self.current_index.is_some(), "No current children");
 
         let index = self.current_index.unwrap();
@@ -542,11 +635,13 @@ impl FlexboxLayoutBuilder {
 
     /// Build the layout object and bind the callback.
     pub fn build(mut self, layout: &FlexboxLayout) -> Result<(), NwgError> {
-        use winapi::um::winuser::WM_SIZE;
         use winapi::shared::minwindef::{HIWORD, LOWORD};
+        use winapi::um::winuser::WM_SIZE;
 
         if self.layout.base.is_null() {
-            return Err(NwgError::layout_create("Flexboxlayout does not have a parent."));
+            return Err(NwgError::layout_create(
+                "Flexboxlayout does not have a parent.",
+            ));
         }
 
         let (w, h) = unsafe { wh::get_window_size(self.layout.base) };
@@ -558,12 +653,14 @@ impl FlexboxLayoutBuilder {
             let size = 1.0f32 / (children_count as f32);
             for child in self.layout.children.iter_mut() {
                 let child_size = match &self.layout.style.flex_direction {
-                    FlexDirection::Row | FlexDirection::RowReverse => {
-                        Size { width: Dimension::Percent(size), height: Dimension::Auto }
+                    FlexDirection::Row | FlexDirection::RowReverse => Size {
+                        width: Dimension::Percent(size),
+                        height: Dimension::Auto,
                     },
-                    FlexDirection::Column | FlexDirection::ColumnReverse => {
-                        Size { width: Dimension::Auto, height: Dimension::Percent(size) }
-                    }
+                    FlexDirection::Column | FlexDirection::ColumnReverse => Size {
+                        width: Dimension::Auto,
+                        height: Dimension::Percent(size),
+                    },
                 };
 
                 child.modify_style(|s| s.size = child_size);
@@ -573,7 +670,12 @@ impl FlexboxLayoutBuilder {
         // Auto spacing if enabled
         if let Some(spacing) = self.auto_spacing {
             let spacing = Dimension::Points(spacing as f32);
-            let spacing = Rect { start: spacing, end: spacing, top: spacing, bottom: spacing};
+            let spacing = Rect {
+                start: spacing,
+                end: spacing,
+                top: spacing,
+                bottom: spacing,
+            };
             self.layout.style.padding = spacing;
             for child in self.layout.children.iter_mut() {
                 child.modify_style(|s| s.margin = spacing);
@@ -584,7 +686,9 @@ impl FlexboxLayoutBuilder {
         {
             let mut layout_inner = layout.inner.borrow_mut();
             if layout_inner.handler.is_some() {
-                drop(unbind_raw_event_handler(layout_inner.handler.as_ref().unwrap()));
+                drop(unbind_raw_event_handler(
+                    layout_inner.handler.as_ref().unwrap(),
+                ));
             }
 
             *layout_inner = self.layout;
@@ -593,15 +697,21 @@ impl FlexboxLayoutBuilder {
         // Sets the parent_layout of any child layout to this layout
         for child in layout.inner.borrow_mut().children.iter_mut() {
             match child {
-                FlexboxLayoutChild::Item(_) => {},
+                FlexboxLayoutChild::Item(_) => {}
                 FlexboxLayoutChild::Flexbox(child_layout) => {
-                    child_layout.inner.borrow_mut().parent_layout.replace(layout.clone());
-                },
+                    child_layout
+                        .inner
+                        .borrow_mut()
+                        .parent_layout
+                        .replace(layout.clone());
+                }
             }
         }
 
         // Initial layout update
-        layout.update_layout(w, h, (0, 0)).expect("Failed to compute layout");
+        layout
+            .update_layout(w, h, (0, 0))
+            .expect("Failed to compute layout");
 
         // Fetch a new ID for the layout handler
         use std::sync::atomic::{AtomicUsize, Ordering};
@@ -616,14 +726,16 @@ impl FlexboxLayoutBuilder {
                 let width = LOWORD(size) as i32;
                 let height = HIWORD(size) as i32;
                 let (w, h) = unsafe { crate::win32::high_dpi::physical_to_logical(width, height) };
-                FlexboxLayout::update_layout(&event_layout, w as u32, h as u32, (0, 0)).expect("Failed to compute layout!");
+                FlexboxLayout::update_layout(&event_layout, w as u32, h as u32, (0, 0))
+                    .expect("Failed to compute layout!");
             }
             None
         };
 
         {
             let mut layout_inner = layout.inner.borrow_mut();
-            layout_inner.handler = Some(bind_raw_event_handler_inner(&base_handle, handler_id, cb).unwrap());
+            layout_inner.handler =
+                Some(bind_raw_event_handler_inner(&base_handle, handler_id, cb).unwrap());
         }
 
         Ok(())
@@ -632,7 +744,9 @@ impl FlexboxLayoutBuilder {
     /// Build a "partial" layout object - this layout has no direct callback and needs to be added to a parent layout using child_layout
     pub fn build_partial(mut self, layout: &FlexboxLayout) -> Result<(), NwgError> {
         if self.layout.base.is_null() {
-            return Err(NwgError::layout_create("Flexboxlayout does not have a parent."));
+            return Err(NwgError::layout_create(
+                "Flexboxlayout does not have a parent.",
+            ));
         }
 
         // Auto compute size if enabled
@@ -641,12 +755,14 @@ impl FlexboxLayoutBuilder {
             let size = 1.0f32 / (children_count as f32);
             for child in self.layout.children.iter_mut() {
                 let child_size = match &self.layout.style.flex_direction {
-                    FlexDirection::Row | FlexDirection::RowReverse => {
-                        Size { width: Dimension::Percent(size), height: Dimension::Auto }
+                    FlexDirection::Row | FlexDirection::RowReverse => Size {
+                        width: Dimension::Percent(size),
+                        height: Dimension::Auto,
                     },
-                    FlexDirection::Column | FlexDirection::ColumnReverse => {
-                        Size { width: Dimension::Auto, height: Dimension::Percent(size) }
-                    }
+                    FlexDirection::Column | FlexDirection::ColumnReverse => Size {
+                        width: Dimension::Auto,
+                        height: Dimension::Percent(size),
+                    },
                 };
 
                 child.modify_style(|s| s.size = child_size);
@@ -656,7 +772,12 @@ impl FlexboxLayoutBuilder {
         // Auto spacing if enabled
         if let Some(spacing) = self.auto_spacing {
             let spacing = Dimension::Points(spacing as f32);
-            let spacing = Rect { start: spacing, end: spacing, top: spacing, bottom: spacing};
+            let spacing = Rect {
+                start: spacing,
+                end: spacing,
+                top: spacing,
+                bottom: spacing,
+            };
             self.layout.style.padding = spacing;
             for child in self.layout.children.iter_mut() {
                 child.modify_style(|s| s.margin = spacing);
@@ -667,7 +788,9 @@ impl FlexboxLayoutBuilder {
         {
             let mut layout_inner = layout.inner.borrow_mut();
             if layout_inner.handler.is_some() {
-                drop(unbind_raw_event_handler(layout_inner.handler.as_ref().unwrap()));
+                drop(unbind_raw_event_handler(
+                    layout_inner.handler.as_ref().unwrap(),
+                ));
             }
 
             *layout_inner = self.layout;
@@ -678,7 +801,6 @@ impl FlexboxLayoutBuilder {
 }
 
 impl Default for FlexboxLayout {
-
     fn default() -> FlexboxLayout {
         let inner = FlexboxLayoutInner {
             base: ptr::null_mut(),
@@ -689,51 +811,46 @@ impl Default for FlexboxLayout {
         };
 
         FlexboxLayout {
-            inner: Rc::new(RefCell::new(inner))
+            inner: Rc::new(RefCell::new(inner)),
         }
     }
-
 }
 
-
 impl FlexboxLayoutChild {
-
     pub fn is_item(&self) -> bool {
         match self {
             FlexboxLayoutChild::Item(_) => true,
-            _ => false
+            _ => false,
         }
     }
 
     pub fn as_item<'a>(&'a self) -> &'a FlexboxLayoutItem {
         match self {
             FlexboxLayoutChild::Item(i) => i,
-            _ => panic!("FlexboxLayoutChild is not an item")
+            _ => panic!("FlexboxLayoutChild is not an item"),
         }
     }
 
     pub fn as_item_mut<'a>(&'a mut self) -> &'a mut FlexboxLayoutItem {
         match self {
             FlexboxLayoutChild::Item(i) => i,
-            _ => panic!("FlexboxLayoutChild is not an item")
+            _ => panic!("FlexboxLayoutChild is not an item"),
         }
     }
 
     pub fn is_flexbox(&self) -> bool {
         match self {
             FlexboxLayoutChild::Flexbox(_) => true,
-            _ => false
+            _ => false,
         }
     }
-
 }
-
 
 /**
     A wrapper that expose the inner collection of a flexboxlayout.
 */
 pub struct FlexboxLayoutChildrenMut<'a> {
-    inner: RefMut<'a, FlexboxLayoutInner>
+    inner: RefMut<'a, FlexboxLayoutInner>,
 }
 
 impl<'a> FlexboxLayoutChildrenMut<'a> {
@@ -742,9 +859,8 @@ impl<'a> FlexboxLayoutChildrenMut<'a> {
     }
 }
 
-
 pub struct FlexboxLayoutChildren<'a> {
-    inner: Ref<'a, FlexboxLayoutInner>
+    inner: Ref<'a, FlexboxLayoutInner>,
 }
 
 impl<'a> FlexboxLayoutChildren<'a> {

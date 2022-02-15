@@ -6,7 +6,7 @@ use winapi::shared::basetsd::SIZE_T;
 use std::{ptr, mem};
 use crate::opengl_canvas::Texel;
 
-const NAME: &'static str = "SyncDraw_Shared_Memory";
+const NAME: &str = "SyncDraw_Shared_Memory";
 const HEADER_SIZE: SIZE_T = mem::size_of::<SharedHeader>() as SIZE_T;
 const DATA_SIZE: SIZE_T = mem::size_of::<SharedData>() as SIZE_T;
 const MAX_TEXTURE_PIXELS: usize = 7000*4320;
@@ -88,7 +88,7 @@ impl SharedMemory {
 
             handle
         };
-        
+
         SharedMemory {
             handle
         }
@@ -194,7 +194,7 @@ impl SharedMemory {
         data.header.texture_width = width;
         data.header.texture_height = height;
         unsafe {
-            
+
             ptr::copy_nonoverlapping(texture_data.as_ptr(), data.texture_data.as_mut_ptr(), pixel_count);
         }
 
@@ -206,7 +206,7 @@ impl SharedMemory {
         let data_ptr = SharedMemory::map_view(self.handle, 0, DATA_SIZE) as *mut SharedData;
         let data = unsafe { &*data_ptr };
 
-        // Pixel count will never be bigger than the capacity of the shared texture. 
+        // Pixel count will never be bigger than the capacity of the shared texture.
         // `set_texture_data` ensures that.
         let pixel_count = (data.header.texture_width * data.header.texture_height) as usize;
         let texture_data: &[Texel] = &data.texture_data[0..pixel_count];

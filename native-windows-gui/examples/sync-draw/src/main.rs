@@ -47,7 +47,7 @@ pub struct SyncDraw {
 
     // Window and layout
     #[nwg_control(size: (400, 300), position: (700, 150), title: "SyncDraw", icon: Some(&data.pen_icon), flags: "MAIN_WINDOW" )]
-    #[nwg_events( 
+    #[nwg_events(
         OnWindowClose: [SyncDraw::exit], OnInit: [SyncDraw::setup],
         OnResize: [SyncDraw::update_size], OnResizeEnd: [SyncDraw::update_size], OnWindowMaximize: [SyncDraw::update_size]
     )]
@@ -110,7 +110,7 @@ impl SyncDraw {
 
         self.window.set_visible(true);
     }
-    
+
     /// Update the current mode of syndraw
     fn update_mode(&self, control: &nwg::Button) {
         let mut data = self.data.borrow_mut();
@@ -118,7 +118,7 @@ impl SyncDraw {
         if control == &self.pencil_btn {
             data.mode = AppMode::Draw;
         } else if control == &self.eraser_btn {
-            data.mode = AppMode::Erase; 
+            data.mode = AppMode::Erase;
         }
 
         self.status.set_text(0, &format!("Current mode: {:?}; Instances linked: {}", data.mode, data.instances_count()));
@@ -141,7 +141,7 @@ impl SyncDraw {
     /// Resize the canvas to match the new window size. Also update the shared texture data.
     fn update_size(&self) {
         let (width, height) = self.canvas.size();
-    
+
         // After the texture was resized write the new data to the shared memory
         self.canvas.resize_texture(width, height, true);
         self.update_texture();
@@ -222,7 +222,7 @@ impl SyncDraw {
 }
 
 
-const ERR: &'static str = "Failed to initialize the SyncDraw";
+const ERR: &str = "Failed to initialize the SyncDraw";
 
 /// Initialization that must be done after the Ui was created
 /// This is only done if the instance of syncdraw is the first one created
@@ -233,7 +233,7 @@ fn init_shared_memory(app: &SyncDraw) {
     }
 
     data.set_window_size(app.window.size());
-    
+
     let (tw, th) = app.canvas.texture_size();
     let texture = app.canvas.texture_data();
     data.set_texture_data(tw, th, &texture);
@@ -263,7 +263,7 @@ fn init_app() -> Result<(), &'static str> {
     let data = AppData::new();
     let app = SyncDraw { data: RefCell::new(data), ..Default::default() };
     let app = SyncDraw::build_ui(app).map_err(|_e| ERR)?;
-    
+
     app.canvas.create_context().map_err(|_e| ERR)?;
 
     init_shared_memory(&app);

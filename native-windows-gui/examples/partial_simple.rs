@@ -1,7 +1,7 @@
 extern crate native_windows_gui as nwg;
 
 use nwg::{NativeUi, PartialUi};
-use std::{rc::Rc, cell::RefCell, ops::Deref};
+use std::{cell::RefCell, ops::Deref, rc::Rc};
 
 #[derive(Default)]
 pub struct MainUi {
@@ -14,12 +14,12 @@ pub struct SubmitForm {
     form_data: String,
     layout: nwg::GridLayout,
     value: nwg::TextInput,
-    sumbit_button: nwg::Button
+    sumbit_button: nwg::Button,
 }
 
 pub struct MainUiWrapper {
     inner: Rc<MainUi>,
-    default_handler: RefCell<Vec<nwg::EventHandler>>
+    default_handler: RefCell<Vec<nwg::EventHandler>>,
 }
 
 impl nwg::NativeUi<MainUiWrapper> for MainUi {
@@ -48,30 +48,31 @@ impl nwg::NativeUi<MainUiWrapper> for MainUi {
                 use nwg::Event as E;
 
                 if let Some(ui) = evt_ui.upgrade() {
-
                     // !!! Partials Event Dispatch !!!
                     ui.form.process_event(evt, &evt_data, handle);
 
                     match evt {
-                        E::OnButtonClick => 
-                            if &handle == &ui.form.sumbit_button {
+                        E::OnButtonClick => {
+                            if handle == ui.form.sumbit_button {
                                 println!("SAVING!");
-                            },
-                        E::OnWindowClose => 
-                            if &handle == &ui.window {
+                            }
+                        }
+                        E::OnWindowClose => {
+                            if handle == ui.window {
                                 nwg::stop_thread_dispatch();
-                            },
+                            }
+                        }
                         _ => {}
                     }
                 }
             };
 
-            ui.default_handler.borrow_mut().push(
-                nwg::full_bind_event_handler(handle, handle_events)
-            );
+            ui.default_handler
+                .borrow_mut()
+                .push(nwg::full_bind_event_handler(handle, handle_events));
         }
 
-        return Ok(ui);
+        Ok(ui)
     }
 }
 
@@ -83,10 +84,11 @@ impl Deref for MainUiWrapper {
     }
 }
 
-
 impl PartialUi for SubmitForm {
-
-    fn build_partial<W: Into<nwg::ControlHandle>>(data: &mut SubmitForm, parent: Option<W>) -> Result<(), nwg::NwgError> {
+    fn build_partial<W: Into<nwg::ControlHandle>>(
+        data: &mut SubmitForm,
+        parent: Option<W>,
+    ) -> Result<(), nwg::NwgError> {
         let parent = parent.unwrap().into();
 
         nwg::TextInput::builder()
@@ -108,15 +110,16 @@ impl PartialUi for SubmitForm {
         Ok(())
     }
 
-    fn process_event<'a>(&self, evt: nwg::Event, _evt_data: &nwg::EventData, handle: nwg::ControlHandle) {
+    fn process_event<'a>(
+        &self,
+        evt: nwg::Event,
+        _evt_data: &nwg::EventData,
+        handle: nwg::ControlHandle,
+    ) {
         use nwg::Event as E;
 
-        match evt {
-            E::OnButtonClick => 
-                if &handle == &self.sumbit_button {
-                    println!("PARTIAL EVENT!");
-                },
-            _ => {}
+        if evt == E::OnButtonClick && handle == self.sumbit_button {
+            println!("PARTIAL EVENT!");
         }
     }
 
@@ -141,4 +144,3 @@ fn main() {
     let _ui = MainUi::build_ui(state).expect("Failed to build UI");
     nwg::dispatch_thread_events();
 }
-

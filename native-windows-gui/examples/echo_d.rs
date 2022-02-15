@@ -2,8 +2,8 @@
     Small example that shows how to scroll and append text to a text box
 */
 
-extern crate native_windows_gui as nwg;
 extern crate native_windows_derive as nwd;
+extern crate native_windows_gui as nwg;
 
 use nwd::NwgUi;
 use nwg::NativeUi;
@@ -30,7 +30,6 @@ pub struct EchoApp {
     #[nwg_control(focus: true)]
     #[nwg_layout_item(layout: grid, col: 0, row: 4, col_span: 7)]
     text_input: nwg::TextInput,
-
 
     #[nwg_control(text: "Clear")]
     #[nwg_layout_item(layout: grid, col: 7, row: 0)]
@@ -61,16 +60,17 @@ impl EchoApp {
         let mut text = String::with_capacity(1000);
 
         for file in drop.files() {
-            text.push_str(&fs::read_to_string(file).unwrap_or("Invalid file".into()));
+            text.push_str(&fs::read_to_string(file).unwrap_or_else(|_| "Invalid file".into()));
         }
-        
+
         self.text.appendln(&text);
     }
 
     pub fn init_text(&self) {
-        self.text.set_text_unix2dos("This text box will echo any text submitted below.\n");
+        self.text
+            .set_text_unix2dos("This text box will echo any text submitted below.\n");
         self.text.append("Printing lines 2-256 to demo scrolling: ");
-        for i in 2..257 { 
+        for i in 2..257 {
             self.text.appendln(&format!("{}", i));
         }
     }
